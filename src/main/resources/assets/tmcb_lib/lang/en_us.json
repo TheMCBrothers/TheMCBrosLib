@@ -1,0 +1,11 @@
+{
+  "item.tmcb_lib.wrench": "Wrench",
+
+  "misc.tmcb_lib.energy": "%s %s",
+  "misc.tmcb_lib.energyWithMax": "%s / %s %s",
+  "misc.tmcb_lib.fluidWithMax": "%s / %s mB",
+  "misc.tmcb_lib.fluidWithMaxName": "%s: %s / %s mB",
+  "misc.tmcb_lib.fluidAmount": "%s mB",
+  "misc.tmcb_lib.empty": "Empty",
+  "misc.tmcb_lib.holdShift": "\u00A77Hold \u00A7e\u00A7oShift \u00A77for Description"
+}

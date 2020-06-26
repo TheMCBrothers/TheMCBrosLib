@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+issueTrackerURL="http://my.issue.tracker/"
+
+[[mods]]
+    modId="tmcb_lib"
+    version="${file.jarVersion}"
+    displayName="TheMCBrosLib"
+    logoFile="logo.png"
+    credits="Some stuff inspired by Mekanism"
+    authors="TheMCBrothers"
+    description='''
+    Library Mod for mods by TheMCBrothers.
+    '''
+[[dependencies.tmcb_lib]] #optional
+    modId="forge"
+    mandatory=true
+    versionRange="[31.1.19,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.tmcb_lib]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15.2]"
+    ordering="NONE"
+    side="BOTH"
