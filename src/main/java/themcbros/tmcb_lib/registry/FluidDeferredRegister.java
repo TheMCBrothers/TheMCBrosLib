@@ -33,8 +33,8 @@ public class FluidDeferredRegister {
     public FluidDeferredRegister(String modId) {
         this.modId = modId;
         this.fluidRegister = DeferredRegister.create(ForgeRegistries.FLUIDS, modId);
-        this.blockRegister = new DeferredRegister<>(ForgeRegistries.BLOCKS, modId);
-        this.itemRegister = new DeferredRegister<>(ForgeRegistries.ITEMS, modId);
+        this.blockRegister = DeferredRegister.create(ForgeRegistries.BLOCKS, modId);
+        this.itemRegister = DeferredRegister.create(ForgeRegistries.ITEMS, modId);
     }
 
     public FluidRegistryObject<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, FlowingFluidBlock, BucketItem> register(String name, FluidAttributes.Builder builder, Function<Item.Properties, Item.Properties> bucketProps) {

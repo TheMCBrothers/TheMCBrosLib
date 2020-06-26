@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
@@ -167,7 +168,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         } else if (json.has("tag")) {
             int amount = JSONUtils.getInt(json, "amount", 1000);
             ResourceLocation resourcelocation = new ResourceLocation(JSONUtils.getString(json, "tag"));
-            Tag<Fluid> tag = FluidTags.getCollection().get(resourcelocation);
+            ITag<Fluid> tag = FluidTags.getCollection().get(resourcelocation);
             if (tag == null) {
                 throw new JsonSyntaxException("Unknown fluid tag '" + resourcelocation + "'");
             } else {
@@ -210,10 +211,10 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public static class TagList implements IFluidList {
-        private final Tag<Fluid> tag;
+        private final ITag<Fluid> tag;
         private final int amount;
 
-        public TagList(Tag<Fluid> tagIn, int amount) {
+        public TagList(ITag<Fluid> tagIn, int amount) {
             this.tag = tagIn;
             this.amount = amount;
         }
@@ -221,7 +222,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         public Collection<FluidStack> getStacks() {
             List<FluidStack> list = Lists.newArrayList();
 
-            for(Fluid fluid : this.tag.getAllElements()) {
+            for(Fluid fluid : this.tag.func_230236_b_()) { // all elements
                 list.add(new FluidStack(fluid, this.amount));
             }
             return list;
