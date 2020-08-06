@@ -81,7 +81,7 @@ public class TextUtils {
     }
 
     /**
-     *
+     * @return Message for holding shift
      */
     public static ITextComponent holdShiftMessage() {
         return translate("misc", "holdShift");

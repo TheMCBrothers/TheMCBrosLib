@@ -128,7 +128,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return fromItemListStream(Arrays.stream(stacks).map(SingleFluidList::new));
     }
 
-    public static FluidIngredient fromTag(int amount, Tag<Fluid> tagIn) {
+    public static FluidIngredient fromTag(int amount, ITag.INamedTag<Fluid> tagIn) {
         return fromItemListStream(Stream.of(new FluidIngredient.TagList(tagIn, amount)));
     }
 
@@ -168,7 +168,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         } else if (json.has("tag")) {
             int amount = JSONUtils.getInt(json, "amount", 1000);
             ResourceLocation resourcelocation = new ResourceLocation(JSONUtils.getString(json, "tag"));
-            ITag<Fluid> tag = FluidTags.getCollection().get(resourcelocation);
+            ITag.INamedTag<Fluid> tag = (ITag.INamedTag<Fluid>) FluidTags.getCollection().get(resourcelocation); // TODO
             if (tag == null) {
                 throw new JsonSyntaxException("Unknown fluid tag '" + resourcelocation + "'");
             } else {
@@ -211,10 +211,10 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public static class TagList implements IFluidList {
-        private final ITag<Fluid> tag;
+        private final ITag.INamedTag<Fluid> tag;
         private final int amount;
 
-        public TagList(ITag<Fluid> tagIn, int amount) {
+        public TagList(ITag.INamedTag<Fluid> tagIn, int amount) {
             this.tag = tagIn;
             this.amount = amount;
         }
@@ -222,7 +222,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         public Collection<FluidStack> getStacks() {
             List<FluidStack> list = Lists.newArrayList();
 
-            for(Fluid fluid : this.tag.func_230236_b_()) { // all elements
+            for(Fluid fluid : this.tag.getAllElements()) { // all elements
                 list.add(new FluidStack(fluid, this.amount));
             }
             return list;
@@ -230,7 +230,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
         public JsonObject serialize() {
             JsonObject jsonobject = new JsonObject();
-            jsonobject.addProperty("tag", this.tag.getId().toString());
+            jsonobject.addProperty("tag", this.tag.getName().toString());
             jsonobject.addProperty("amount", this.amount);
             return jsonobject;
         }

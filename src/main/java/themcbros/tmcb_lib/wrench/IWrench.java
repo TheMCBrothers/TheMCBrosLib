@@ -8,6 +8,6 @@ public interface IWrench {
 
     boolean canUseWrench(ItemStack stack, PlayerEntity player, BlockPos pos);
 
-    IWrench DEFAULT = (stack, player, pos) -> false;
+    IWrench DEFAULT = (stack, player, pos) -> true;
 
 }
