@@ -1,6 +1,7 @@
 package themcbros.tmcb_lib.client.screen.widgets;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -30,13 +32,13 @@ public class FluidTank extends Widget {
     private final ContainerScreen<?> screen;
 
     public FluidTank(int xIn, int yIn, IFluidHandler fluidHandler, ContainerScreen<?> screen) {
-        super(xIn, yIn, 8, 48, "");
+        super(xIn, yIn, 8, 48, StringTextComponent.EMPTY);
         this.fluidHandler = fluidHandler;
         this.screen = screen;
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             this.drawFluid(this.x, this.y, this.getFluid());
@@ -52,10 +54,10 @@ public class FluidTank extends Widget {
     }
 
     @Override
-    public void renderToolTip(int mouseX, int mouseY) {
+    public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
         ITextComponent fluidName = TextUtils.fluidName(this.getFluid());
         ITextComponent energy = TextUtils.fluidWithMax(fluidHandler);
-        this.screen.renderTooltip(Lists.newArrayList(fluidName.getFormattedText(), energy.getFormattedText()), mouseX, mouseY);
+        this.screen.renderTooltip(matrixStack, Lists.newArrayList(fluidName, energy), mouseX, mouseY);
     }
 
     // Rendering methods

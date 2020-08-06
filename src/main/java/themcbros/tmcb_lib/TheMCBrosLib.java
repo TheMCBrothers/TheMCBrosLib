@@ -27,7 +27,7 @@ public class TheMCBrosLib {
     public static final String MOD_ID = "tmcb_lib";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MOD_ID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static final RegistryObject<WrenchItem> WRENCH = TheMCBrosLib.ITEMS.register("wrench",
             () -> new WrenchItem(properties -> properties));
 

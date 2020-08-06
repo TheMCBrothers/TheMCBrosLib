@@ -3,59 +3,57 @@ package themcbros.tmcb_lib.util;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import org.lwjgl.system.CallbackI;
 
 public class TagUtils {
 
     // ITEM TAGS
 
-    public static Tag<Item> forgeItemTag(String path) {
-        return new ItemTags.Wrapper(new ResourceLocation(ForgeVersion.MOD_ID, path));
+    public static ITag.INamedTag<Item> forgeItemTag(String id) {
+        return ItemTags.makeWrapperTag(ForgeVersion.MOD_ID + ':' + id);
     }
 
-    public static Tag<Item> modItemTag(String modID, String path) {
-        return new ItemTags.Wrapper(new ResourceLocation(modID, path));
+    public static ITag.INamedTag<Item> modItemTag(String modID, String id) {
+        return ItemTags.makeWrapperTag(modID + ':' + id);
     }
 
-    public static Tag<Item> modItemTag(ResourceLocation location) {
-        return new ItemTags.Wrapper(location);
+    public static ITag.INamedTag<Item> modItemTag(ResourceLocation location) {
+        return ItemTags.makeWrapperTag(location.toString());
     }
 
     // BLOCK TAGS
 
-    public static Tag<Block> forgeBlockTag(String path) {
-        return new BlockTags.Wrapper(new ResourceLocation(ForgeVersion.MOD_ID, path));
+    public static ITag.INamedTag<Block> forgeBlockTag(String id) {
+        return BlockTags.makeWrapperTag(ForgeVersion.MOD_ID + ':' + id);
     }
 
-    public static Tag<Block> modBlockTag(String modID, String path) {
-        return new BlockTags.Wrapper(new ResourceLocation(modID, path));
+    public static ITag.INamedTag<Block> modBlockTag(String modID, String id) {
+        return BlockTags.makeWrapperTag(modID + ':' + id);
     }
 
-    public static Tag<Block> modBlockTag(ResourceLocation location) {
-        return new BlockTags.Wrapper(location);
+    public static ITag.INamedTag<Block> modBlockTag(ResourceLocation id) {
+        return BlockTags.makeWrapperTag(id.toString());
     }
 
     // FLUID TAGS
 
-    public static Tag<Fluid> forgeFluidTag(String path) {
-        return new FluidTags.Wrapper(new ResourceLocation(ForgeVersion.MOD_ID, path));
+    public static ITag.INamedTag<Fluid> forgeFluidTag(String id) {
+        return FluidTags.makeWrapperTag(ForgeVersion.MOD_ID + ':' + id);
     }
 
-    public static Tag<Fluid> vanillaFluidTag(String path) {
-        return new FluidTags.Wrapper(new ResourceLocation(path));
+    public static ITag.INamedTag<Fluid> vanillaFluidTag(String id) {
+        return FluidTags.makeWrapperTag(id);
     }
 
-    public static Tag<Fluid> modFluidTag(String modID, String path) {
-        return new FluidTags.Wrapper(new ResourceLocation(modID, path));
+    public static ITag.INamedTag<Fluid> modFluidTag(String modID, String id) {
+        return FluidTags.makeWrapperTag(modID + ':' + id);
     }
 
-    public static Tag<Fluid> modFluidTag(ResourceLocation location) {
-        return new FluidTags.Wrapper(location);
+    public static ITag.INamedTag<Fluid> modFluidTag(ResourceLocation id) {
+        return FluidTags.makeWrapperTag(id.toString());
     }
 
 }

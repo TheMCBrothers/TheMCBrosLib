@@ -32,8 +32,8 @@ public interface IWrenchableTileEntity {
                 BlockState state1 = state.rotate(world, pos, Rotation.CLOCKWISE_90);
                 if (state1 != state) {
                     world.setBlockState(pos, state1, 1 | 3 | 16 | 32);
+                    return true;
                 }
-                return true;
             }
         }
         return false;

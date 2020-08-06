@@ -42,8 +42,12 @@ public enum EnergyUnit implements IStringSerializable {
         return this.formattings;
     }
 
-    @Override
     public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public String getString() {
         return this.name;
     }
 }

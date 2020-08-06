@@ -15,8 +15,7 @@ public class FluidCraftingHelper {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    public static FluidStack getFluidStack(JsonObject json, boolean readNBT)
-    {
+    public static FluidStack getFluidStack(JsonObject json, boolean readNBT) {
         String fluidName = JSONUtils.getString(json, "fluid");
 
         Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(fluidName));
@@ -24,14 +23,12 @@ public class FluidCraftingHelper {
         if (fluid == null)
             throw new JsonSyntaxException("Unknown fluid '" + fluidName + "'");
 
-        if (readNBT && json.has("nbt"))
-        {
+        if (readNBT && json.has("nbt")) {
             // Lets hope this works? Needs test
-            try
-            {
+            try {
                 JsonElement element = json.get("nbt");
                 CompoundNBT nbt;
-                if(element.isJsonObject())
+                if (element.isJsonObject())
                     nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
                 else
                     nbt = JsonToNBT.getTagFromJson(JSONUtils.getString(element, "nbt"));
@@ -43,9 +40,7 @@ public class FluidCraftingHelper {
                 tmp.putInt("Amount", JSONUtils.getInt(json, "amount", FluidAttributes.BUCKET_VOLUME));
 
                 return FluidStack.loadFluidStackFromNBT(tmp);
-            }
-            catch (CommandSyntaxException e)
-            {
+            } catch (CommandSyntaxException e) {
                 throw new JsonSyntaxException("Invalid NBT Entry: " + e.toString());
             }
         }
