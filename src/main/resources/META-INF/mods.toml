@@ -15,12 +15,12 @@ issueTrackerURL="http://my.issue.tracker/"
 [[dependencies.tmcb_lib]] #optional
     modId="forge"
     mandatory=true
-    versionRange="[31.1.19,)"
+    versionRange="[32,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.tmcb_lib]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.1,"
     ordering="NONE"
     side="BOTH"
