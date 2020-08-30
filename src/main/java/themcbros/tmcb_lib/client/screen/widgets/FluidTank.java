@@ -57,7 +57,7 @@ public class FluidTank extends Widget {
     public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
         ITextComponent fluidName = TextUtils.fluidName(this.getFluid());
         ITextComponent energy = TextUtils.fluidWithMax(fluidHandler);
-        this.screen.renderTooltip(matrixStack, Lists.newArrayList(fluidName, energy), mouseX, mouseY);
+        this.screen.func_243308_b(matrixStack, Lists.newArrayList(fluidName, energy), mouseX, mouseY);
     }
 
     // Rendering methods

@@ -1,6 +1,7 @@
 modLoader="javafml"
-loaderVersion="[32,)"
+loaderVersion="[33,)"
 issueTrackerURL="http://my.issue.tracker/"
+license="MIT"
 
 [[mods]]
     modId="tmcb_lib"
@@ -15,12 +16,12 @@ issueTrackerURL="http://my.issue.tracker/"
 [[dependencies.tmcb_lib]] #optional
     modId="forge"
     mandatory=true
-    versionRange="[32,)"
+    versionRange="[33,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.tmcb_lib]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.1,)"
+    versionRange="[1.16.2,)"
     ordering="NONE"
     side="BOTH"

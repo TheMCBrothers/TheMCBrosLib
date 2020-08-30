@@ -7,9 +7,8 @@ import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
@@ -29,11 +28,11 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
     private static final Predicate<? super IFluidList> IS_EMPTY = (fluidList) -> !fluidList.getStacks().stream().allMatch(FluidStack::isEmpty);
     public static final FluidIngredient EMPTY = new FluidIngredient(Stream.empty());
-    private final IFluidList[] acceptedItems;
+    private final IFluidList[] acceptedFluids;
     private FluidStack[] matchingStacks;
     private IntList matchingStacksPacked;
-    protected FluidIngredient(Stream<? extends IFluidList> itemLists) {
-        this.acceptedItems = itemLists.filter(IS_EMPTY).toArray(IFluidList[]::new);
+    protected FluidIngredient(Stream<? extends IFluidList> fluidLists) {
+        this.acceptedFluids = fluidLists.filter(IS_EMPTY).toArray(IFluidList[]::new);
         FluidIngredient.INSTANCES.add(this);
     }
 
@@ -44,7 +43,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
     private void determineMatchingStacks() {
         if (this.matchingStacks == null) {
-            this.matchingStacks = Arrays.stream(this.acceptedItems).flatMap((p_209359_0_) -> p_209359_0_.getStacks().stream()).distinct().toArray(FluidStack[]::new);
+            this.matchingStacks = Arrays.stream(this.acceptedFluids).flatMap((p_209359_0_) -> p_209359_0_.getStacks().stream()).distinct().toArray(FluidStack[]::new);
         }
 
     }
@@ -52,7 +51,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     public boolean test(@Nullable FluidStack fluidStackIn) {
         if (fluidStackIn == null) {
             return false;
-        } else if (this.acceptedItems.length == 0) {
+        } else if (this.acceptedFluids.length == 0) {
             return fluidStackIn.isEmpty();
         } else {
             this.determineMatchingStacks();
@@ -93,13 +92,13 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public JsonElement serialize() {
-        if (this.acceptedItems.length == 1) {
-            return this.acceptedItems[0].serialize();
+        if (this.acceptedFluids.length == 1) {
+            return this.acceptedFluids[0].serialize();
         } else {
             JsonArray jsonarray = new JsonArray();
 
-            for(IFluidList ingredient$iitemlist : this.acceptedItems) {
-                jsonarray.add(ingredient$iitemlist.serialize());
+            for(IFluidList fluidList : this.acceptedFluids) {
+                jsonarray.add(fluidList.serialize());
             }
 
             return jsonarray;
@@ -107,7 +106,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public boolean hasNoMatchingItems() {
-        return this.acceptedItems.length == 0 && (this.matchingStacks == null || this.matchingStacks.length == 0) && (this.matchingStacksPacked == null || this.matchingStacksPacked.isEmpty());
+        return this.acceptedFluids.length == 0 && (this.matchingStacks == null || this.matchingStacks.length == 0) && (this.matchingStacksPacked == null || this.matchingStacksPacked.isEmpty());
     }
 
     protected void invalidate() {
@@ -115,42 +114,42 @@ public class FluidIngredient implements Predicate<FluidStack> {
         this.matchingStacksPacked = null;
     }
 
-    public static FluidIngredient fromItemListStream(Stream<? extends IFluidList> stream) {
+    public static FluidIngredient fromFluidListStream(Stream<? extends IFluidList> stream) {
         FluidIngredient ingredient = new FluidIngredient(stream);
-        return ingredient.acceptedItems.length == 0 ? EMPTY : ingredient;
+        return ingredient.acceptedFluids.length == 0 ? EMPTY : ingredient;
     }
 
     public static FluidIngredient fromFluid(int amount, Fluid... fluids) {
-        return fromItemListStream(Arrays.stream(fluids).map((fluid) -> new SingleFluidList(new FluidStack(fluid, amount))));
+        return fromFluidListStream(Arrays.stream(fluids).map((fluid) -> new SingleFluidList(new FluidStack(fluid, amount))));
     }
 
     public static FluidIngredient fromStacks(FluidStack... stacks) {
-        return fromItemListStream(Arrays.stream(stacks).map(SingleFluidList::new));
+        return fromFluidListStream(Arrays.stream(stacks).map(SingleFluidList::new));
     }
 
     public static FluidIngredient fromTag(int amount, ITag.INamedTag<Fluid> tagIn) {
-        return fromItemListStream(Stream.of(new FluidIngredient.TagList(tagIn, amount)));
+        return fromFluidListStream(Stream.of(new FluidIngredient.TagList(tagIn, amount)));
     }
 
     public static FluidIngredient read(PacketBuffer buffer) {
         int i = buffer.readVarInt();
-        return fromItemListStream(Stream.generate(() -> new SingleFluidList(buffer.readFluidStack())).limit(i));
+        return fromFluidListStream(Stream.generate(() -> new SingleFluidList(buffer.readFluidStack())).limit(i));
     }
 
     public static FluidIngredient deserialize(@Nullable JsonElement json) {
         if (json != null && !json.isJsonNull()) {
             if (json.isJsonObject()) {
-                return fromItemListStream(Stream.of(deserializeFluidList(json.getAsJsonObject())));
+                return fromFluidListStream(Stream.of(deserializeFluidList(json.getAsJsonObject())));
             } else if (json.isJsonArray()) {
                 JsonArray jsonarray = json.getAsJsonArray();
                 if (jsonarray.size() == 0) {
-                    throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
+                    throw new JsonSyntaxException("Fluid array cannot be empty, at least one fluid must be defined");
                 } else {
-                    return fromItemListStream(StreamSupport.stream(jsonarray.spliterator(), false).map(
+                    return fromFluidListStream(StreamSupport.stream(jsonarray.spliterator(), false).map(
                             (jsonElement) -> deserializeFluidList(JSONUtils.getJsonObject(jsonElement, "fluid"))));
                 }
             } else {
-                throw new JsonSyntaxException("Expected item to be object or array of objects");
+                throw new JsonSyntaxException("Expected fluid to be object or array of objects");
             }
         } else {
             throw new JsonSyntaxException("Fluid cannot be null");
@@ -162,13 +161,13 @@ public class FluidIngredient implements Predicate<FluidStack> {
             throw new JsonParseException("An ingredient entry is either a tag or an fluid, not both");
         } else if (json.has("fluid")) {
             int amount = JSONUtils.getInt(json, "amount", 1000);
-            ResourceLocation resourcelocation1 = new ResourceLocation(JSONUtils.getString(json, "fluid"));
-            Fluid item = Registry.FLUID.getValue(resourcelocation1).orElseThrow(() -> new JsonSyntaxException("Unknown fluid '" + resourcelocation1 + "'"));
-            return new SingleFluidList(new FluidStack(item, amount));
+            ResourceLocation resourceLocation = new ResourceLocation(JSONUtils.getString(json, "fluid"));
+            Fluid fluid = Registry.FLUID.func_241873_b(resourceLocation).orElseThrow(() -> new JsonSyntaxException("Unknown fluid '" + resourceLocation + "'"));
+            return new SingleFluidList(new FluidStack(fluid, amount));
         } else if (json.has("tag")) {
             int amount = JSONUtils.getInt(json, "amount", 1000);
             ResourceLocation resourcelocation = new ResourceLocation(JSONUtils.getString(json, "tag"));
-            ITag.INamedTag<Fluid> tag = (ITag.INamedTag<Fluid>) FluidTags.getCollection().get(resourcelocation); // TODO
+            ITag<Fluid> tag = TagCollectionManager.func_242178_a().func_241837_c().get(resourcelocation);
             if (tag == null) {
                 throw new JsonSyntaxException("Unknown fluid tag '" + resourcelocation + "'");
             } else {
@@ -182,7 +181,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     //Merges several vanilla Ingredients together. As a qwerk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and remerge here.
     //Only public for internal use, so we can access a private field in here.
     public static FluidIngredient merge(Collection<FluidIngredient> parts) {
-        return fromItemListStream(parts.stream().flatMap(i -> Arrays.stream(i.acceptedItems)));
+        return fromFluidListStream(parts.stream().flatMap(i -> Arrays.stream(i.acceptedFluids)));
     }
 
     public interface IFluidList {
@@ -211,10 +210,10 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public static class TagList implements IFluidList {
-        private final ITag.INamedTag<Fluid> tag;
+        private final ITag<Fluid> tag;
         private final int amount;
 
-        public TagList(ITag.INamedTag<Fluid> tagIn, int amount) {
+        public TagList(ITag<Fluid> tagIn, int amount) {
             this.tag = tagIn;
             this.amount = amount;
         }
@@ -222,7 +221,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         public Collection<FluidStack> getStacks() {
             List<FluidStack> list = Lists.newArrayList();
 
-            for(Fluid fluid : this.tag.getAllElements()) { // all elements
+            for(Fluid fluid : this.tag.getAllElements()) {
                 list.add(new FluidStack(fluid, this.amount));
             }
             return list;
@@ -230,7 +229,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
         public JsonObject serialize() {
             JsonObject jsonobject = new JsonObject();
-            jsonobject.addProperty("tag", this.tag.getName().toString());
+            jsonobject.addProperty("tag", TagCollectionManager.func_242178_a().func_241837_c().func_232975_b_(this.tag).toString());
             jsonobject.addProperty("amount", this.amount);
             return jsonobject;
         }

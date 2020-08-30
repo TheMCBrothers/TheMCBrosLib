@@ -13,11 +13,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.common.crafting.NBTIngredient;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.ForgeRegistries;
 import themcbros.tmcb_lib.util.FluidCraftingHelper;
 
@@ -99,9 +97,12 @@ public class FluidItemIngredient extends Ingredient {
                 item.fillItemGroup(ItemGroup.SEARCH, items);
                 for (ItemStack stack : items) {
                     FluidUtil.getFluidHandler(stack).ifPresent(fluidHandlerItem -> {
-                        if (fluidHandlerItem.getFluidInTank(0).isEmpty()) {
-                            fluidHandlerItem.fill(new FluidStack(this.fluid, this.amount), IFluidHandler.FluidAction.EXECUTE);
-                            this.stacks.add(stack); // TODO check if it works!
+                        FluidStack newStack = new FluidStack(this.fluid, this.amount);
+                        for (int tank = 0; tank < fluidHandlerItem.getTanks(); tank++) {
+                            if (fluidHandlerItem.getFluidInTank(tank).isEmpty() && fluidHandlerItem.isFluidValid(tank, newStack)) {
+                                fluidHandlerItem.fill(newStack, IFluidHandler.FluidAction.EXECUTE);
+                                this.stacks.add(stack); // TODO check if it works!
+                            }
                         }
                     });
                 }
