@@ -21,6 +21,9 @@ import net.themcbrothers.lib.util.TextUtils;
 
 import javax.annotation.Nullable;
 
+/**
+ * Widget for displaying a fluid from a {@link IFluidHandler}
+ */
 public class FluidTank extends AbstractWidget {
 
     private static final int TEX_WIDTH = 16;
@@ -30,18 +33,22 @@ public class FluidTank extends AbstractWidget {
     private final IFluidHandler fluidHandler;
     private final AbstractContainerScreen<?> screen;
 
-    public FluidTank(int xIn, int yIn, IFluidHandler fluidHandler, AbstractContainerScreen<?> screen) {
-        super(xIn, yIn, 8, 48, TextComponent.EMPTY);
+    public FluidTank(int x, int y, int width, int height, IFluidHandler fluidHandler, AbstractContainerScreen<?> screen) {
+        super(x, y, width, height, TextComponent.EMPTY);
         this.fluidHandler = fluidHandler;
         this.screen = screen;
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (this.visible) {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            this.drawFluid(this.x, this.y, this.getFluid());
-        }
+    public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+        this.drawFluid(this.x, this.y, this.getFluid());
+    }
+
+    @Override
+    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
+        Component fluidName = TextUtils.fluidName(this.getFluid());
+        Component energy = TextUtils.fluidWithMax(this.fluidHandler);
+        this.screen.renderTooltip(matrixStack, CommonComponents.joinLines(fluidName, energy), mouseX, mouseY);
     }
 
     public FluidStack getFluid() {
@@ -50,13 +57,6 @@ public class FluidTank extends AbstractWidget {
 
     private int getCapacity() {
         return this.fluidHandler.getTankCapacity(0);
-    }
-
-    @Override
-    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
-        Component fluidName = TextUtils.fluidName(this.getFluid());
-        Component energy = TextUtils.fluidWithMax(this.fluidHandler);
-        this.screen.renderTooltip(matrixStack, CommonComponents.joinLines(fluidName, energy), mouseX, mouseY);
     }
 
     // Rendering methods

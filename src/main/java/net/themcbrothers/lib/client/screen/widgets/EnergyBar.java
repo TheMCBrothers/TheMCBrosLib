@@ -12,10 +12,13 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.themcbrothers.lib.TheMCBrosLib;
 import net.themcbrothers.lib.config.Config;
-import net.themcbrothers.lib.energy.EnergyUnit;
 import net.themcbrothers.lib.energy.EnergyProvider;
+import net.themcbrothers.lib.energy.EnergyUnit;
 import net.themcbrothers.lib.util.TextUtils;
 
+/**
+ * Widget for displaying energy from a {@link EnergyProvider}
+ */
 public class EnergyBar extends AbstractWidget {
     public static final ResourceLocation TEXTURE = TheMCBrosLib.rl("textures/gui/energy_bar.png");
 
@@ -31,21 +34,23 @@ public class EnergyBar extends AbstractWidget {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (this.visible) {
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+    public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+        RenderSystem.setShaderTexture(0, TEXTURE);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        int xOff = this.unit.ordinal() * 18;
+        this.blit(poseStack, this.x - 1, this.y - 1, xOff, 0, this.width + 2, this.height + 2);
+        int i = this.getScaledHeight();
+        this.blit(poseStack, this.x, this.y + this.height - i, xOff + this.width + 2, 0, this.width, i);
+    }
 
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-            RenderSystem.setShaderTexture(0, TEXTURE);
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            int xOff = this.unit.ordinal() * 18;
-            this.blit(matrixStack, this.x - 1, this.y - 1, xOff, 0, this.width + 2, this.height + 2);
-            int i = this.getScaledHeight();
-            this.blit(matrixStack, this.x, this.y + this.height - i, xOff + this.width + 2, 0, this.width, i);
-        }
+    @Override
+    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
+        Component energy = TextUtils.energyWithMax(this.getEnergyStored(), this.getMaxEnergyStored(), this.unit);
+        this.screen.renderTooltip(matrixStack, energy, mouseX, mouseY);
     }
 
     @Override
@@ -77,12 +82,6 @@ public class EnergyBar extends AbstractWidget {
 
     private int getMaxEnergyStored() {
         return (int) this.unit.getDisplayEnergy(this.energyProvider.getMaxEnergyStored());
-    }
-
-    @Override
-    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
-        Component energy = TextUtils.energyWithMax(this.getEnergyStored(), this.getMaxEnergyStored(), this.unit);
-        this.screen.renderTooltip(matrixStack, energy, mouseX, mouseY);
     }
 
     @Override
