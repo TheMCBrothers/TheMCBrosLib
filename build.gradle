@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
 archivesBaseName = "TheMCBrosLib"
@@ -104,7 +105,7 @@ private String getSecret(String key) {
     return null
 }
 
-
+// publishing on NEXUS
 publishing {
     publications { PublicationContainer publicationContainer ->
         publicationContainer.register("maven", MavenPublication) { MavenPublication publication ->
@@ -124,3 +125,18 @@ publishing {
         }
     }
 }
+
+// publishing on CurseForge
+curseforge {
+    apiKey = getSecret('cf_key')
+
+    project {
+        id = project.project_id
+        changelog = 'No Changelog provided'
+        releaseType = project.artifact_type
+        addGameVersion(project.mc_version)
+        mainArtifact jar
+    }
+}
+
+tasks.named("curseforge") { finalizedBy("publish") }
