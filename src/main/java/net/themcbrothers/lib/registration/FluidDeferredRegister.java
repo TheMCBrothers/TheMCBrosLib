@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+@Deprecated
 public class FluidDeferredRegister {
     private final List<FluidRegistryObject<?, ?, ?, ?>> allFluids = new ArrayList<>();
 

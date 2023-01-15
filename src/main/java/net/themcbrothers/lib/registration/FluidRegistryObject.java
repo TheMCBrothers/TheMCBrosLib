@@ -9,6 +9,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Objects;
 
+@Deprecated
 public class FluidRegistryObject<STILL extends Fluid, FLOWING extends Fluid, BLOCK extends LiquidBlock, BUCKET extends BucketItem> {
     private RegistryObject<STILL> stillRegistryObject;
     private RegistryObject<FLOWING> flowingRegistryObject;
