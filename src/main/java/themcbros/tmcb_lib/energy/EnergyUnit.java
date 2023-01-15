@@ -1,17 +1,16 @@
 package themcbros.tmcb_lib.energy;
 
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public enum EnergyUnit implements IStringSerializable {
-
+public enum EnergyUnit implements StringRepresentable {
     REDSTONE_FLUX("RF", null, energy -> energy, Styles.REDSTONE_FLUX),
     FORGE_ENERGY("FE", null, energy -> energy, Styles.FORGE_ENERGY),
     USELESS_ENERGY("UE", () -> ModList.get().isLoaded("uselessmod"), energy -> energy, Styles.USELESS_ENERGY),
@@ -49,17 +48,17 @@ public enum EnergyUnit implements IStringSerializable {
     }
 
     @Override
-    public String getString() {
+    public String getSerializedName() {
         return this.name;
     }
 
     private static class Styles {
-        private static final Style REDSTONE_FLUX = Style.EMPTY.setColor(Color.func_240744_a_(TextFormatting.RED));
-        private static final Style FORGE_ENERGY = Style.EMPTY.setColor(Color.func_240744_a_(TextFormatting.RED));
-        private static final Style USELESS_ENERGY = Style.EMPTY.setColor(Color.func_240743_a_(0x62B15F));
-        private static final Style ENERGY_UNITS = Style.EMPTY.setColor(Color.func_240744_a_(TextFormatting.RED));
-        private static final Style IMMERSIVE_FLUX = Style.EMPTY.setColor(Color.func_240744_a_(TextFormatting.GOLD));
-        private static final Style JOULES = Style.EMPTY.setColor(Color.func_240743_a_(0x3BFB98));
+        private static final Style REDSTONE_FLUX = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.RED));
+        private static final Style FORGE_ENERGY = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.RED));
+        private static final Style USELESS_ENERGY = Style.EMPTY.withColor(TextColor.fromRgb(0x62B15F));
+        private static final Style ENERGY_UNITS = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.RED));
+        private static final Style IMMERSIVE_FLUX = Style.EMPTY.withColor(TextColor.fromLegacyFormat(ChatFormatting.GOLD));
+        private static final Style JOULES = Style.EMPTY.withColor(TextColor.fromRgb(0x3BFB98));
     }
 
 }

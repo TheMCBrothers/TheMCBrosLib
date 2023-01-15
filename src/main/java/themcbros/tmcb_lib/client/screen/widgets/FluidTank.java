@@ -1,20 +1,19 @@
 package themcbros.tmcb_lib.client.screen.widgets;
 
-import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -22,23 +21,23 @@ import themcbros.tmcb_lib.util.TextUtils;
 
 import javax.annotation.Nullable;
 
-public class FluidTank extends Widget {
+public class FluidTank extends AbstractWidget {
 
     private static final int TEX_WIDTH = 16;
     private static final int TEX_HEIGHT = 16;
     private static final int MIN_FLUID_HEIGHT = 1;
 
     private final IFluidHandler fluidHandler;
-    private final ContainerScreen<?> screen;
+    private final AbstractContainerScreen<?> screen;
 
-    public FluidTank(int xIn, int yIn, IFluidHandler fluidHandler, ContainerScreen<?> screen) {
-        super(xIn, yIn, 8, 48, StringTextComponent.EMPTY);
+    public FluidTank(int xIn, int yIn, IFluidHandler fluidHandler, AbstractContainerScreen<?> screen) {
+        super(xIn, yIn, 8, 48, TextComponent.EMPTY);
         this.fluidHandler = fluidHandler;
         this.screen = screen;
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             this.drawFluid(this.x, this.y, this.getFluid());
@@ -54,10 +53,10 @@ public class FluidTank extends Widget {
     }
 
     @Override
-    public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
-        ITextComponent fluidName = TextUtils.fluidName(this.getFluid());
-        ITextComponent energy = TextUtils.fluidWithMax(fluidHandler);
-        this.screen.func_243308_b(matrixStack, Lists.newArrayList(fluidName, energy), mouseX, mouseY);
+    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
+        Component fluidName = TextUtils.fluidName(this.getFluid());
+        Component energy = TextUtils.fluidWithMax(this.fluidHandler);
+        this.screen.renderTooltip(matrixStack, CommonComponents.joinLines(fluidName, energy), mouseX, mouseY);
     }
 
     // Rendering methods
@@ -89,9 +88,9 @@ public class FluidTank extends Widget {
     }
 
     protected void drawTiledSprite(final int xPosition, final int yPosition, final int tiledWidth, final int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         setGLColorFromInt(color);
+        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
 
         final int xTileCount = tiledWidth / TEX_WIDTH;
         final int xRemainder = tiledWidth - (xTileCount * TEX_WIDTH);
@@ -121,7 +120,7 @@ public class FluidTank extends Widget {
         Fluid fluid = fluidStack.getFluid();
         FluidAttributes attributes = fluid.getAttributes();
         ResourceLocation fluidStill = attributes.getStillTexture(fluidStack);
-        return minecraft.getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluidStill);
+        return minecraft.getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(fluidStill);
     }
 
     private static void setGLColorFromInt(int color) {
@@ -130,26 +129,29 @@ public class FluidTank extends Widget {
         float blue = (color & 0xFF) / 255.0F;
         float alpha = ((color >> 24) & 0xFF) / 255F;
 
-        RenderSystem.color4f(red, green, blue, alpha);
+        RenderSystem.setShaderColor(red, green, blue, alpha);
     }
 
     private static void drawTextureWithMasking(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
-        double uMin = textureSprite.getMinU();
-        double uMax = textureSprite.getMaxU();
-        double vMin = textureSprite.getMinV();
-        double vMax = textureSprite.getMaxV();
+        double uMin = textureSprite.getU0();
+        double uMax = textureSprite.getU1();
+        double vMin = textureSprite.getV0();
+        double vMax = textureSprite.getV1();
         uMax = uMax - (maskRight / 16.0 * (uMax - uMin));
         vMax = vMax - (maskTop / 16.0 * (vMax - vMin));
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-        bufferBuilder.pos(xCoord, yCoord + 16, zLevel).tex((float) uMin, (float) vMax).endVertex();
-        bufferBuilder.pos(xCoord + 16 - maskRight, yCoord + 16, zLevel).tex((float) uMax, (float) vMax).endVertex();
-        bufferBuilder.pos(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).tex((float) uMax, (float) vMin).endVertex();
-        bufferBuilder.pos(xCoord, yCoord + maskTop, zLevel).tex((float) uMin, (float) vMin).endVertex();
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferBuilder = tesselator.getBuilder();
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferBuilder.vertex(xCoord, yCoord + 16, zLevel).uv((float) uMin, (float) vMax).endVertex();
+        bufferBuilder.vertex(xCoord + 16 - maskRight, yCoord + 16, zLevel).uv((float) uMax, (float) vMax).endVertex();
+        bufferBuilder.vertex(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).uv((float) uMax, (float) vMin).endVertex();
+        bufferBuilder.vertex(xCoord, yCoord + maskTop, zLevel).uv((float) uMin, (float) vMin).endVertex();
 
-        tessellator.draw();
+        tesselator.end();
     }
 
+    @Override
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    }
 }

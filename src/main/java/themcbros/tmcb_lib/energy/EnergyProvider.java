@@ -3,10 +3,8 @@ package themcbros.tmcb_lib.energy;
 /**
  * For containers
  */
-public interface IEnergyProvider {
-
+public interface EnergyProvider {
     long getEnergyStored();
 
     long getMaxEnergyStored();
-
 }

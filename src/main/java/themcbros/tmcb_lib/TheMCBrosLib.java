@@ -1,24 +1,23 @@
 package themcbros.tmcb_lib;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import themcbros.tmcb_lib.config.Config;
-import themcbros.tmcb_lib.crafting.ingredient.FluidItemIngredient;
 import themcbros.tmcb_lib.wrench.WrenchItem;
 
 @Mod(TheMCBrosLib.MOD_ID)
@@ -32,6 +31,8 @@ public class TheMCBrosLib {
             () -> new WrenchItem(properties -> properties));
 
     public TheMCBrosLib() {
+        ForgeMod.enableMilkFluid();
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         TheMCBrosLib.ITEMS.register(modEventBus);
 
@@ -45,8 +46,8 @@ public class TheMCBrosLib {
     }
 
     @SubscribeEvent
-    public void registerRecipeSerializers(RegistryEvent.Register<IRecipeSerializer<?>> event) {
-        CraftingHelper.register(rl("fluid"), FluidItemIngredient.Serializer.INSTANCE);
+    public void registerRecipeSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
+        //CraftingHelper.register(rl("fluid"), FluidItemIngredient.Serializer.INSTANCE);
     }
 
 }

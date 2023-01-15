@@ -2,6 +2,6 @@
 @MethodsReturnNonnullByDefault
 package themcbros.tmcb_lib.client.screen.widgets;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;

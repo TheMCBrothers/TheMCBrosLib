@@ -1,43 +1,43 @@
 package themcbros.tmcb_lib.client.screen.widgets;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import themcbros.tmcb_lib.TheMCBrosLib;
 import themcbros.tmcb_lib.config.Config;
 import themcbros.tmcb_lib.energy.EnergyUnit;
-import themcbros.tmcb_lib.energy.IEnergyProvider;
+import themcbros.tmcb_lib.energy.EnergyProvider;
 import themcbros.tmcb_lib.util.TextUtils;
 
-public class EnergyBar extends Widget {
-
+public class EnergyBar extends AbstractWidget {
     public static final ResourceLocation TEXTURE = TheMCBrosLib.rl("textures/gui/energy_bar.png");
 
-    private final IEnergyProvider energyProvider;
-    private final ContainerScreen<?> screen;
+    private final EnergyProvider energyProvider;
+    private final AbstractContainerScreen<?> screen;
     private EnergyUnit unit = Config.CLIENT_CONFIG.energyUnit;
 
-    public EnergyBar(int xIn, int yIn, IEnergyProvider energyProvider, ContainerScreen<?> screen) {
-        super(xIn, yIn, 8, 48, StringTextComponent.EMPTY);
+    public EnergyBar(int xIn, int yIn, EnergyProvider energyProvider, AbstractContainerScreen<?> screen) {
+        super(xIn, yIn, 8, 48, TextComponent.EMPTY);
         this.active = true;
         this.energyProvider = energyProvider;
         this.screen = screen;
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
-            Minecraft minecraft = Minecraft.getInstance();
-            minecraft.getTextureManager().bindTexture(TEXTURE);
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+            RenderSystem.setShaderTexture(0, TEXTURE);
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -46,11 +46,6 @@ public class EnergyBar extends Widget {
             int i = this.getScaledHeight();
             this.blit(matrixStack, this.x, this.y + this.height - i, xOff + this.width + 2, 0, this.width, i);
         }
-    }
-
-    @Override
-    public void blit(MatrixStack matrixStack, int screenX, int screenY, int textureX, int textureY, int width, int height) {
-        super.blit(matrixStack, screenX, screenY, textureX, textureY, width, height);
     }
 
     @Override
@@ -85,8 +80,12 @@ public class EnergyBar extends Widget {
     }
 
     @Override
-    public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
-        ITextComponent energy = TextUtils.energyWithMax(this.getEnergyStored(), this.getMaxEnergyStored(), this.unit);
+    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
+        Component energy = TextUtils.energyWithMax(this.getEnergyStored(), this.getMaxEnergyStored(), this.unit);
         this.screen.renderTooltip(matrixStack, energy, mouseX, mouseY);
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
     }
 }

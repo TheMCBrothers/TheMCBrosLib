@@ -4,6 +4,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import themcbros.tmcb_lib.TheMCBrosLib;
 
@@ -21,7 +22,7 @@ public class Config {
     }
 
     @SubscribeEvent
-    public static void bakeConfig(final ModConfig.ModConfigEvent event) {
+    public static void bakeConfig(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == CLIENT_SPEC)
             CLIENT_CONFIG.bake();
     }
