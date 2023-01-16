@@ -3,6 +3,7 @@ package net.themcbrothers.lib.registration.deferred;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 
 /**
@@ -28,6 +29,15 @@ public abstract class DeferredRegisterWrapper<T> {
     protected DeferredRegisterWrapper(DeferredRegister<T> register, String modId) {
         this.register = register;
         this.modId = modId;
+    }
+
+    /**
+     * Initializes this registry wrapper. Needs to be called during mod construction
+     *
+     * @param bus Mod Event Bus
+     */
+    public void register(IEventBus bus) {
+        this.register.register(bus);
     }
 
     protected ResourceLocation resource(String name) {

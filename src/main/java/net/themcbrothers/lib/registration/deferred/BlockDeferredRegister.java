@@ -5,6 +5,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.themcbrothers.lib.registration.object.ItemObject;
@@ -22,6 +23,12 @@ public class BlockDeferredRegister extends DeferredRegisterWrapper<Block> {
     public BlockDeferredRegister(String modId) {
         super(Registry.BLOCK_REGISTRY, modId);
         this.itemRegister = DeferredRegister.create(Registry.ITEM_REGISTRY, modId);
+    }
+
+    @Override
+    public void register(IEventBus bus) {
+        super.register(bus);
+        this.itemRegister.register(bus);
     }
 
     public <B extends Block> RegistryObject<B> registerNoItem(String name, Supplier<B> block) {
