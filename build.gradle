@@ -121,7 +121,11 @@ publishing {
                 password = getSecret('nexus_pwd')
             }
 
-            url 'https://nexus.themcbrothers.net/repository/maven-releases/'
+            if (project.version.endsWith('-SNAPSHOT')) {
+                url 'https://nexus.themcbrothers.net/repository/maven-snapshots/'
+            } else {
+                url 'https://nexus.themcbrothers.net/repository/maven-releases/'
+            }
         }
     }
 }
