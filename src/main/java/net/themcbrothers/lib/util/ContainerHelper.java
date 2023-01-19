@@ -3,21 +3,29 @@ package net.themcbrothers.lib.util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class ContainerHelper {
-    public static <T extends BlockEntity> T getTileEntity(Class<T> clazz, final Inventory inv, final FriendlyByteBuf data) {
+    /**
+     * Returns the block entity for a container
+     *
+     * @param clazz Block entity class
+     * @param inv   Player inventory
+     * @param data  Buffer data
+     * @return Block entity instance
+     */
+    @NotNull
+    public static <T extends BlockEntity> T getBlockEntity(Class<T> clazz, final Inventory inv, final FriendlyByteBuf data) {
         Objects.requireNonNull(inv, "inv cannot be null");
         Objects.requireNonNull(data, "data cannot be null");
 
-        final BlockEntity tileEntity = inv.player.level.getBlockEntity(data.readBlockPos());
-        if (tileEntity == null) {
-            return null;
-        } else if (clazz.isInstance(tileEntity)) {
-            return clazz.cast(tileEntity);
+        final BlockEntity blockEntity = inv.player.level.getBlockEntity(data.readBlockPos());
+        if (clazz.isInstance(blockEntity)) {
+            return clazz.cast(blockEntity);
         }
 
-        return null;
+        throw new IllegalStateException("BlockEntity is not correct! " + blockEntity);
     }
 }

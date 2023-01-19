@@ -16,6 +16,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.themcbrothers.lib.config.Config;
+import net.themcbrothers.lib.util.ComponentFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.themcbrothers.lib.wrench.WrenchItem;
@@ -24,6 +25,7 @@ import net.themcbrothers.lib.wrench.WrenchItem;
 public class TheMCBrosLib {
     public static final String MOD_ID = "tmcb_lib";
     public static final Logger LOGGER = LogManager.getLogger();
+    public static final ComponentFormatter TEXT_UTILS = new ComponentFormatter(MOD_ID);
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static final RegistryObject<WrenchItem> WRENCH = TheMCBrosLib.ITEMS.register("wrench",

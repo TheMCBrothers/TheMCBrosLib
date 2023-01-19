@@ -1,5 +1,6 @@
 package net.themcbrothers.lib.client.screen.widgets;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
@@ -9,7 +10,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -17,9 +17,11 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.themcbrothers.lib.util.TextUtils;
 
 import javax.annotation.Nullable;
+import java.util.List;
+
+import static net.themcbrothers.lib.TheMCBrosLib.TEXT_UTILS;
 
 /**
  * Widget for displaying a fluid from a {@link IFluidHandler}
@@ -46,9 +48,8 @@ public class FluidTank extends AbstractWidget {
 
     @Override
     public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
-        Component fluidName = TextUtils.fluidName(this.getFluid());
-        Component energy = TextUtils.fluidWithMax(this.fluidHandler);
-        this.screen.renderTooltip(matrixStack, CommonComponents.joinLines(fluidName, energy), mouseX, mouseY);
+        List<Component> list = List.of(TEXT_UTILS.fluidName(this.getFluid()), TEXT_UTILS.fluidWithMax(this.fluidHandler));
+        this.screen.renderTooltip(matrixStack, Lists.transform(list, Component::getVisualOrderText), mouseX, mouseY);
     }
 
     public FluidStack getFluid() {
