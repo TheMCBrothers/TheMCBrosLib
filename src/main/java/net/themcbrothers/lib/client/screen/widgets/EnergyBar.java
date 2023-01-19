@@ -14,7 +14,8 @@ import net.themcbrothers.lib.TheMCBrosLib;
 import net.themcbrothers.lib.config.Config;
 import net.themcbrothers.lib.energy.EnergyProvider;
 import net.themcbrothers.lib.energy.EnergyUnit;
-import net.themcbrothers.lib.util.TextUtils;
+
+import static net.themcbrothers.lib.TheMCBrosLib.TEXT_UTILS;
 
 /**
  * Widget for displaying energy from a {@link EnergyProvider}
@@ -24,13 +25,22 @@ public class EnergyBar extends AbstractWidget {
 
     private final EnergyProvider energyProvider;
     private final AbstractContainerScreen<?> screen;
+    private final Size size;
     private EnergyUnit unit = Config.CLIENT_CONFIG.energyUnit;
 
+    /**
+     * @deprecated Use constructor with {@link Size}
+     */
     public EnergyBar(int xIn, int yIn, EnergyProvider energyProvider, AbstractContainerScreen<?> screen) {
-        super(xIn, yIn, 8, 48, TextComponent.EMPTY);
+        this(xIn, yIn, Size._8x48, energyProvider, screen);
+    }
+
+    public EnergyBar(int xIn, int yIn, Size size, EnergyProvider energyProvider, AbstractContainerScreen<?> screen) {
+        super(xIn, yIn, size.width, size.height, TextComponent.EMPTY);
         this.active = true;
         this.energyProvider = energyProvider;
         this.screen = screen;
+        this.size = size;
     }
 
     @Override
@@ -41,15 +51,16 @@ public class EnergyBar extends AbstractWidget {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        int xOff = this.unit.ordinal() * 18;
-        this.blit(poseStack, this.x - 1, this.y - 1, xOff, 0, this.width + 2, this.height + 2);
+        int xOff = this.unit.ordinal() * (this.width * 2 + 2);
+        int yOff = this.size.getYOff();
+        this.blit(poseStack, this.x - 1, this.y - 1, xOff, yOff, this.width + 2, this.height + 2);
         int i = this.getScaledHeight();
-        this.blit(poseStack, this.x, this.y + this.height - i, xOff + this.width + 2, 0, this.width, i);
+        this.blit(poseStack, this.x, this.y + this.height - i, xOff + this.width + 2, yOff, this.width, i);
     }
 
     @Override
     public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
-        Component energy = TextUtils.energyWithMax(this.getEnergyStored(), this.getMaxEnergyStored(), this.unit);
+        Component energy = TEXT_UTILS.energyWithMax(this.getEnergyStored(), this.getMaxEnergyStored(), this.unit);
         this.screen.renderTooltip(matrixStack, energy, mouseX, mouseY);
     }
 
@@ -86,5 +97,27 @@ public class EnergyBar extends AbstractWidget {
 
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    }
+
+    public enum Size {
+        _8x48(8, 48),
+        _10x50(10, 50);
+
+        private final int width, height;
+
+        Size(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        private int getYOff() {
+            int off = 0;
+
+            for (int i = ordinal() - 1; i >= 0; i--) {
+                off += values()[i].height + 2;
+            }
+
+            return off;
+        }
     }
 }
