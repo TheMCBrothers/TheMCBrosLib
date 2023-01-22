@@ -10,19 +10,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public interface WrenchableBlock {
-    default boolean tryWrench(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    default boolean tryWrench(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack stack = player.getItemInHand(hand);
         if (!stack.isEmpty()) {
             Wrench wrench = WrenchUtils.getWrench(stack);
             if (wrench != null && wrench.canUseWrench(stack, player, pos)) {
                 if (player.isSecondaryUseActive()) {
-                    WrenchUtils.dismantleBlock(state, world, pos, null, null, null);
+                    WrenchUtils.dismantleBlock(state, level, pos, level.getBlockEntity(pos), null, null);
                     return true;
                 }
 
-                BlockState state1 = state.rotate(world, pos, Rotation.CLOCKWISE_90);
+                BlockState state1 = state.rotate(level, pos, Rotation.CLOCKWISE_90);
                 if (state1 != state) {
-                    world.setBlock(pos, state1, 1 | 2 | 16 | 32);
+                    level.setBlock(pos, state1, 1 | 2 | 16 | 32);
                     return true;
                 }
             }
