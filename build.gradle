@@ -10,8 +10,13 @@ archivesBaseName = "TheMCBrosLib"
 group = "net.themcbrothers"
 version = "$project.mc_version-$project.mod_version"
 
-// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+
+    withSourcesJar()
+}
 
 minecraft {
     mappings channel: 'parchment', version: project.mappings_version
@@ -89,6 +94,17 @@ jar {
     }
 }
 
+sourcesJar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    archiveClassifier.set('sources')
+    from sourceSets.main.allJava;
+}
+
+artifacts {
+    archives tasks.jar
+    archives tasks.sourcesJar
+}
+
 // Example configuration to allow publishing using the maven-publish task
 // This is the preferred method to reobfuscate your jar file
 jar.finalizedBy('reobfJar')
@@ -109,9 +125,10 @@ private String getSecret(String key) {
 publishing {
     publications { PublicationContainer publicationContainer ->
         publicationContainer.register("maven", MavenPublication) { MavenPublication publication ->
-            publication.artifacts = [jar]
-            publication.version = "$project.version"
-            publication.artifactId = "TheMCBrosLib"
+            publication.artifact(jar)
+            publication.artifact(sourcesJar)
+            publication.version("$project.version")
+            publication.artifactId("TheMCBrosLib")
         }
     }
     repositories {
