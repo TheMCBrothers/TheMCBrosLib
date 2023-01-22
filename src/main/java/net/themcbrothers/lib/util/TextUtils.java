@@ -2,7 +2,6 @@ package net.themcbrothers.lib.util;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeI18n;
@@ -21,7 +20,7 @@ public class TextUtils {
 
     public static MutableComponent translate(String prefix, String suffix, Object... params) {
         String key = String.format("%s.%s.%s", prefix, TheMCBrosLib.MOD_ID, suffix);
-        return new TranslatableComponent(key, params);
+        return Component.translatable(key, params);
     }
 
     public static MutableComponent energy(int amount, EnergyUnit unit) {
@@ -73,7 +72,7 @@ public class TextUtils {
 
     public static Component fluidName(Fluid fluid) {
         if (fluid == Fluids.EMPTY) return translate("misc", "empty");
-        return fluid.getAttributes().getDisplayName(FluidStack.EMPTY);
+        return fluid.getFluidType().getDescription(FluidStack.EMPTY);
     }
 
     /**

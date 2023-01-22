@@ -8,7 +8,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.themcbrothers.lib.TheMCBrosLib;
 import net.themcbrothers.lib.config.Config;
@@ -36,7 +35,7 @@ public class EnergyBar extends AbstractWidget {
     }
 
     public EnergyBar(int xIn, int yIn, Size size, EnergyProvider energyProvider, AbstractContainerScreen<?> screen) {
-        super(xIn, yIn, size.width, size.height, TextComponent.EMPTY);
+        super(xIn, yIn, size.width, size.height, Component.empty());
         this.active = true;
         this.energyProvider = energyProvider;
         this.screen = screen;

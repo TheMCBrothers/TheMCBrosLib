@@ -3,7 +3,6 @@ package net.themcbrothers.lib.registration.object;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +14,7 @@ import java.util.function.Supplier;
  *
  * @param <I> Item class
  */
-public class ItemObject<I extends IForgeRegistryEntry<? super I> & ItemLike> implements Supplier<I>, ItemLike {
+public class ItemObject<I extends ItemLike> implements Supplier<I>, ItemLike {
     private final Supplier<? extends I> entry;
     private final ResourceLocation name;
 

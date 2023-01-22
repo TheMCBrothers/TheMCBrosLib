@@ -3,9 +3,7 @@ package net.themcbrothers.lib;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -14,12 +12,13 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import net.themcbrothers.lib.config.Config;
 import net.themcbrothers.lib.util.ComponentFormatter;
+import net.themcbrothers.lib.wrench.WrenchItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.themcbrothers.lib.wrench.WrenchItem;
 
 @Mod(TheMCBrosLib.MOD_ID)
 public class TheMCBrosLib {
@@ -47,7 +46,9 @@ public class TheMCBrosLib {
     }
 
     @SubscribeEvent
-    public void registerRecipeSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
-        //CraftingHelper.register(rl("fluid"), FluidItemIngredient.Serializer.INSTANCE);
+    public void registerRecipeSerializers(RegisterEvent event) {
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
+//            CraftingHelper.register(rl("fluid"), FluidItemIngredient.Serializer.INSTANCE);
+        }
     }
 }

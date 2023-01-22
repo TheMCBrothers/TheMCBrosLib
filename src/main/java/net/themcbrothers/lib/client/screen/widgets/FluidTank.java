@@ -11,10 +11,9 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -36,7 +35,7 @@ public class FluidTank extends AbstractWidget {
     private final AbstractContainerScreen<?> screen;
 
     public FluidTank(int x, int y, int width, int height, IFluidHandler fluidHandler, AbstractContainerScreen<?> screen) {
-        super(x, y, width, height, TextComponent.EMPTY);
+        super(x, y, width, height, Component.empty());
         this.fluidHandler = fluidHandler;
         this.screen = screen;
     }
@@ -72,9 +71,7 @@ public class FluidTank extends AbstractWidget {
         }
 
         TextureAtlasSprite fluidStillSprite = getStillFluidSprite(fluidStack);
-
-        FluidAttributes attributes = fluid.getAttributes();
-        int fluidColor = attributes.getColor(fluidStack);
+        int fluidColor = getColorTint(fluidStack);
 
         int amount = fluidStack.getAmount();
         int scaledAmount = (amount * height) / getCapacity();
@@ -119,9 +116,13 @@ public class FluidTank extends AbstractWidget {
     private static TextureAtlasSprite getStillFluidSprite(FluidStack fluidStack) {
         Minecraft minecraft = Minecraft.getInstance();
         Fluid fluid = fluidStack.getFluid();
-        FluidAttributes attributes = fluid.getAttributes();
-        ResourceLocation fluidStill = attributes.getStillTexture(fluidStack);
+        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
+        ResourceLocation fluidStill = renderProperties.getStillTexture(fluidStack);
         return minecraft.getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(fluidStill);
+    }
+
+    private static int getColorTint(FluidStack fluidStack) {
+        return IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack);
     }
 
     private static void setGLColorFromInt(int color) {

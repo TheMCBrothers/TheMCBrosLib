@@ -9,10 +9,11 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,35 +25,39 @@ public class FluidDeferredRegister {
 
     private final String modId;
 
+    private final DeferredRegister<FluidType> fluidTypeRegister;
     private final DeferredRegister<Fluid> fluidRegister;
     private final DeferredRegister<Block> blockRegister;
     private final DeferredRegister<Item> itemRegister;
 
     public FluidDeferredRegister(String modId) {
         this.modId = modId;
-        this.fluidRegister = DeferredRegister.create(ForgeRegistries.FLUIDS, modId);
-        this.blockRegister = DeferredRegister.create(ForgeRegistries.BLOCKS, modId);
-        this.itemRegister = DeferredRegister.create(ForgeRegistries.ITEMS, modId);
+        this.fluidTypeRegister = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, modId);
+        this.fluidRegister = DeferredRegister.create(ForgeRegistries.Keys.FLUIDS, modId);
+        this.blockRegister = DeferredRegister.create(ForgeRegistries.Keys.BLOCKS, modId);
+        this.itemRegister = DeferredRegister.create(ForgeRegistries.Keys.ITEMS, modId);
     }
 
-    public FluidRegistryObject<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, LiquidBlock, BucketItem> register(String name, FluidAttributes.Builder builder, Function<Item.Properties, Item.Properties> bucketProps) {
+    public FluidRegistryObject<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, LiquidBlock, BucketItem> register(String name, FluidType.Properties builder, Function<Item.Properties, Item.Properties> bucketProps) {
         String flowingName = "flowing_" + name;
         String bucketName = name + "_bucket";
 
+        RegistryObject<FluidType> typeObj = this.fluidTypeRegister.register(name, () -> new FluidType(builder));
+
         FluidRegistryObject<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, LiquidBlock, BucketItem> fluidRegistryObject = new FluidRegistryObject<>(modId, name);
-        ForgeFlowingFluid.Properties fluidProperties = new ForgeFlowingFluid.Properties(fluidRegistryObject::getStillFluid, fluidRegistryObject::getFlowingFluid, builder)
+        ForgeFlowingFluid.Properties fluidProperties = new ForgeFlowingFluid.Properties(typeObj, fluidRegistryObject::getStillFluid, fluidRegistryObject::getFlowingFluid)
                 .bucket(fluidRegistryObject::getBucket).block(fluidRegistryObject::getBlock);
         fluidRegistryObject.updateStill(fluidRegister.register(name, () -> new ForgeFlowingFluid.Source(fluidProperties)));
         fluidRegistryObject.updateFlowing(fluidRegister.register(flowingName, () -> new ForgeFlowingFluid.Flowing(fluidProperties)));
         fluidRegistryObject.updateBlock(blockRegister.register(name, () -> new LiquidBlock(fluidRegistryObject::getStillFluid,
-                Block.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())));
+                Block.Properties.of(Material.WATER).noCollission().strength(100.0F).noLootTable())));
         fluidRegistryObject.updateBucket(itemRegister.register(bucketName, () -> new BucketItem(fluidRegistryObject::getStillFluid,
                 bucketProps.apply(new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)))));
         allFluids.add(fluidRegistryObject);
         return fluidRegistryObject;
     }
 
-    public FluidRegistryObject<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, LiquidBlock, BucketItem> register(String name, FluidAttributes.Builder builder) {
+    public FluidRegistryObject<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, LiquidBlock, BucketItem> register(String name, FluidType.Properties builder) {
         return register(name, builder, properties -> properties.tab(CreativeModeTab.TAB_MISC));
     }
 
