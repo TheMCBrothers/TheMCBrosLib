@@ -59,7 +59,7 @@ public class EnergyBar extends AbstractWidget {
 
     @Override
     public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
-        Component energy = TEXT_UTILS.energyWithMax(this.getEnergyStored(), this.getMaxEnergyStored(), this.unit);
+        Component energy = TEXT_UTILS.energyWithMax(this.energyProvider.getEnergyStored(), this.energyProvider.getMaxEnergyStored(), this.unit);
         this.screen.renderTooltip(matrixStack, energy, mouseX, mouseY);
     }
 
@@ -84,14 +84,6 @@ public class EnergyBar extends AbstractWidget {
         float j = (float) this.energyProvider.getMaxEnergyStored();
         float h = (float) this.height;
         return i != 0 && j != 0 ? (int) (i / j * h) : 0;
-    }
-
-    private int getEnergyStored() {
-        return (int) this.unit.getDisplayEnergy(this.energyProvider.getEnergyStored());
-    }
-
-    private int getMaxEnergyStored() {
-        return (int) this.unit.getDisplayEnergy(this.energyProvider.getMaxEnergyStored());
     }
 
     @Override

@@ -26,14 +26,25 @@ public class ComponentFormatter {
         return Component.translatable(key, params);
     }
 
-    public MutableComponent energy(int amount, EnergyUnit unit) {
-        String s1 = String.format(FORMAT, amount);
+    /**
+     * @param amount Amount as Forge Energy
+     * @param unit   Energy Unit
+     * @return Formatted Energy (eg. 4,000 FE)
+     */
+    public MutableComponent energy(long amount, EnergyUnit unit) {
+        String s1 = String.format(FORMAT, unit.getDisplayEnergy(amount));
         return translate("misc", "energy", s1, unit.getName());
     }
 
-    public MutableComponent energyWithMax(int amount, int max, EnergyUnit unit) {
-        String s1 = String.format(FORMAT, amount);
-        String s2 = String.format(FORMAT, max);
+    /**
+     * @param amount Amount as Forge Energy
+     * @param max    Capacity amount as Forge Energy
+     * @param unit   Energy Unit
+     * @return Formatted Energy (eg. 4,000 FE)
+     */
+    public MutableComponent energyWithMax(long amount, long max, EnergyUnit unit) {
+        String s1 = String.format(FORMAT, unit.getDisplayEnergy(amount));
+        String s2 = String.format(FORMAT, unit.getDisplayEnergy(max));
         return translate("misc", "energyWithMax", s1, s2, unit.getName());
     }
 
