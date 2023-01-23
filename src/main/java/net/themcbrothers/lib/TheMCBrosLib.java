@@ -4,7 +4,6 @@ package net.themcbrothers.lib;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -51,14 +50,5 @@ public class TheMCBrosLib {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
 //            CraftingHelper.register(rl("fluid"), FluidItemIngredient.Serializer.INSTANCE);
         }
-    }
-
-    @SubscribeEvent
-    public void buildCreativeTabContent(final CreativeModeTabEvent.BuildContents event) {
-        WrenchItem.CREATIVE_TABS.forEach(((item, creativeModeTabs) -> {
-            if (creativeModeTabs.contains(event.getTab())) {
-                event.accept(item);
-            }
-        }));
     }
 }
