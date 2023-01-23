@@ -42,10 +42,9 @@ public class FluidTank extends AbstractWidget {
 
     @Override
     public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        this.drawFluid(this.x, this.y, this.getFluid());
+        this.drawFluid(this.getX(), this.getY(), this.getFluid());
     }
 
-    @Override
     public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
         List<Component> list = List.of(TEXT_UTILS.fluidName(this.getFluid()), TEXT_UTILS.fluidWithMax(this.fluidHandler));
         this.screen.renderTooltip(matrixStack, Lists.transform(list, Component::getVisualOrderText), mouseX, mouseY);
@@ -154,6 +153,6 @@ public class FluidTank extends AbstractWidget {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
     }
 }

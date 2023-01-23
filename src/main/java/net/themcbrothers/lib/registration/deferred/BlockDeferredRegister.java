@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.registration.deferred;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -21,8 +21,8 @@ public class BlockDeferredRegister extends DeferredRegisterWrapper<Block> {
     private final DeferredRegister<Item> itemRegister;
 
     public BlockDeferredRegister(String modId) {
-        super(Registry.BLOCK_REGISTRY, modId);
-        this.itemRegister = DeferredRegister.create(Registry.ITEM_REGISTRY, modId);
+        super(Registries.BLOCK, modId);
+        this.itemRegister = DeferredRegister.create(Registries.ITEM, modId);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.registration.deferred;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.RegistryObject;
 import net.themcbrothers.lib.registration.object.ItemObject;
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  */
 public class ItemDeferredRegister extends DeferredRegisterWrapper<Item> {
     public ItemDeferredRegister(String modId) {
-        super(Registry.ITEM_REGISTRY, modId);
+        super(Registries.ITEM, modId);
     }
 
     public <I extends Item> ItemObject<I> register(String name, Supplier<I> item) {

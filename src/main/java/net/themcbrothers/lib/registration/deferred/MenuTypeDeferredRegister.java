@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.registration.deferred;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -12,7 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
  */
 public class MenuTypeDeferredRegister extends DeferredRegisterWrapper<MenuType<?>> {
     public MenuTypeDeferredRegister(String modId) {
-        super(Registry.MENU_REGISTRY, modId);
+        super(Registries.MENU, modId);
     }
 
     /**

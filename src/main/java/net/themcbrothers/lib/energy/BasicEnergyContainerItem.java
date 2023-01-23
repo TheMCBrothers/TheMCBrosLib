@@ -3,8 +3,8 @@ package net.themcbrothers.lib.energy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.themcbrothers.lib.capability.CapabilityProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +56,7 @@ public class BasicEnergyContainerItem extends Item implements EnergyContainerIte
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new CapabilityProvider<>(new EnergyConversionStorage(this, stack), CapabilityEnergy.ENERGY, null);
+        return new CapabilityProvider<>(new EnergyConversionStorage(this, stack), ForgeCapabilities.ENERGY, null);
     }
 
     /* IEnergyContainerItem */

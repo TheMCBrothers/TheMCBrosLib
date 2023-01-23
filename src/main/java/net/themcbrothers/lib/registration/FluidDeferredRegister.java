@@ -1,7 +1,6 @@
 package net.themcbrothers.lib.registration;
 
 import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -58,7 +57,7 @@ public class FluidDeferredRegister {
     }
 
     public FluidRegistryObject<ForgeFlowingFluid.Source, ForgeFlowingFluid.Flowing, LiquidBlock, BucketItem> register(String name, FluidType.Properties builder) {
-        return register(name, builder, properties -> properties.tab(CreativeModeTab.TAB_MISC));
+        return register(name, builder, properties -> properties);
     }
 
     public void register(IEventBus bus) {

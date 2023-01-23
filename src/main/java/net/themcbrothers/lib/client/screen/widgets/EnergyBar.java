@@ -52,12 +52,11 @@ public class EnergyBar extends AbstractWidget {
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         int xOff = this.unit.ordinal() * (this.width * 2 + 2);
         int yOff = this.size.getYOff();
-        this.blit(poseStack, this.x - 1, this.y - 1, xOff, yOff, this.width + 2, this.height + 2);
+        this.blit(poseStack, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2);
         int i = this.getScaledHeight();
-        this.blit(poseStack, this.x, this.y + this.height - i, xOff + this.width + 2, yOff, this.width, i);
+        this.blit(poseStack, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i);
     }
 
-    @Override
     public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
         Component energy = TEXT_UTILS.energyWithMax(this.energyProvider.getEnergyStored(), this.energyProvider.getMaxEnergyStored(), this.unit);
         this.screen.renderTooltip(matrixStack, energy, mouseX, mouseY);
@@ -87,7 +86,7 @@ public class EnergyBar extends AbstractWidget {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
     }
 
     public enum Size {
