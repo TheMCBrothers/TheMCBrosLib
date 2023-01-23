@@ -2,7 +2,7 @@ package net.themcbrothers.lib;
 
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,11 +10,11 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryObject;
 import net.themcbrothers.lib.config.Config;
+import net.themcbrothers.lib.registration.deferred.ItemDeferredRegister;
+import net.themcbrothers.lib.registration.object.ItemObject;
 import net.themcbrothers.lib.util.ComponentFormatter;
 import net.themcbrothers.lib.wrench.WrenchItem;
 import org.apache.logging.log4j.LogManager;
@@ -26,8 +26,8 @@ public class TheMCBrosLib {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final ComponentFormatter TEXT_UTILS = new ComponentFormatter(MOD_ID);
 
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    public static final RegistryObject<WrenchItem> WRENCH = TheMCBrosLib.ITEMS.register("wrench",
+    private static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(MOD_ID);
+    public static final ItemObject<WrenchItem> WRENCH = TheMCBrosLib.ITEMS.register("wrench",
             () -> new WrenchItem(properties -> properties));
 
     public TheMCBrosLib() {

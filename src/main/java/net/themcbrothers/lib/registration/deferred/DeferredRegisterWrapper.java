@@ -5,6 +5,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
+
+import java.util.Collection;
 
 /**
  * Wrapper for a {@link DeferredRegister}
@@ -38,6 +41,13 @@ public abstract class DeferredRegisterWrapper<T> {
      */
     public void register(IEventBus bus) {
         this.register.register(bus);
+    }
+
+    /**
+     * @return All entries as {@link RegistryObject}s
+     */
+    public Collection<RegistryObject<T>> getEntries() {
+        return this.register.getEntries();
     }
 
     protected ResourceLocation resource(String name) {
