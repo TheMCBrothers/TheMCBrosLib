@@ -222,6 +222,35 @@ public abstract class FluidIngredient {
         throw new JsonSyntaxException("An ingredient entry needs either a tag or an fluid");
     }
 
+    /*
+     * Packet buffers
+     */
+
+    /**
+     * Reads a fluid ingredient from the packet buffer
+     *
+     * @param buffer Buffer instance
+     * @return Fluid ingredient instance
+     */
+    public static FluidIngredient read(FriendlyByteBuf buffer) {
+        int count = buffer.readInt();
+        FluidIngredient[] ingredients = new FluidIngredient[count];
+        for (int i = 0; i < count; i++) {
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(buffer.readUtf(32767)));
+            if (fluid == null) {
+                fluid = Fluids.EMPTY;
+            }
+            int amount = buffer.readInt();
+            ingredients[i] = of(fluid, amount);
+        }
+        // if a single ingredient, do not wrap in compound
+        if (count == 1) {
+            return ingredients[0];
+        }
+        // compound for anything else
+        return of(ingredients);
+    }
+
     /**
      * Empty fluid ingredient
      */
