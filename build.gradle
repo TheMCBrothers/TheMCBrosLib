@@ -125,7 +125,7 @@ private String getSecret(String key) {
 publishing {
     publications { PublicationContainer publicationContainer ->
         publicationContainer.register("maven", MavenPublication) { MavenPublication publication ->
-            publication.artifacts = [jar]
+            publication.artifacts = [jar, sourcesJar]
             publication.version = "$project.version"
             publication.artifactId = "TheMCBrosLib"
         }
