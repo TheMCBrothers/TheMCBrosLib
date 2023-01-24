@@ -16,12 +16,9 @@ import java.util.function.Supplier;
 
 /**
  * Deferred register for {@link BlockEntityType}s
- *
- * @deprecated Renamed to {@link BlockEntityTypeDeferredRegister}
  */
-@Deprecated(since = "2.0.2")
-public class BlockEntityDeferredRegister extends DeferredRegisterWrapper<BlockEntityType<?>> {
-    public BlockEntityDeferredRegister(String modId) {
+public class BlockEntityTypeDeferredRegister extends DeferredRegisterWrapper<BlockEntityType<?>> {
+    public BlockEntityTypeDeferredRegister(String modId) {
         super(Registries.BLOCK_ENTITY_TYPE, modId);
     }
 
