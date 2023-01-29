@@ -153,10 +153,9 @@ curseforge {
 
     project {
         id = project.project_id
-        changelog = 'No Changelog provided'
         releaseType = project.artifact_type
         addGameVersion(project.mc_version)
-        mainArtifact jar
+        mainArtifact(tasks.jar)
     }
 }
 
