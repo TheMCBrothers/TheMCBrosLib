@@ -63,17 +63,13 @@ public class FluidTank extends AbstractWidget {
     // Rendering methods
 
     protected void drawFluid(final int xPosition, final int yPosition, @Nullable FluidStack fluidStack) {
-        if (fluidStack == null) {
-            return;
-        }
-        Fluid fluid = fluidStack.getFluid();
-        if (fluid == null) {
+        if (fluidStack == null || fluidStack.isEmpty()) {
             return;
         }
 
         TextureAtlasSprite fluidStillSprite = getStillFluidSprite(fluidStack);
 
-        FluidAttributes attributes = fluid.getAttributes();
+        FluidAttributes attributes = fluidStack.getFluid().getAttributes();
         int fluidColor = attributes.getColor(fluidStack);
 
         int amount = fluidStack.getAmount();
