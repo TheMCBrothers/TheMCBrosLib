@@ -28,7 +28,9 @@ public class CreativeTabHelper {
      * @param creativeModeTabs Creative Mode Tabs
      */
     public static void addToCreativeTabs(Supplier<? extends ItemLike> itemLike, CreativeModeTab... creativeModeTabs) {
-        ITEM_TO_TABS.computeIfAbsent(itemLike, item -> Lists.newArrayList()).addAll(Arrays.asList(creativeModeTabs));
+        if (creativeModeTabs.length > 0) {
+            ITEM_TO_TABS.computeIfAbsent(itemLike, item -> Lists.newArrayList()).addAll(Arrays.asList(creativeModeTabs));
+        }
     }
 
     @SubscribeEvent
