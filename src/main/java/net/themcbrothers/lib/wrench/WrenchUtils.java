@@ -1,7 +1,9 @@
 package net.themcbrothers.lib.wrench;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +14,9 @@ import net.themcbrothers.lib.util.TagUtils;
 import javax.annotation.Nullable;
 
 public class WrenchUtils {
+    private static final TagKey<Item> TAG_TOOLS_WRENCH = TagUtils.forgeItemTag("tools/wrench");
+    private static final TagKey<Item> TAG_WRENCHES = TagUtils.forgeItemTag("wrenches");
+    private static final TagKey<Item> TAG_WRENCH = TagUtils.forgeItemTag("wrench");
 
     @Nullable
     public static Wrench getWrench(ItemStack stack) {
@@ -29,9 +34,6 @@ public class WrenchUtils {
     }
 
     public static boolean hasWrenchTag(ItemStack stack) {
-        return stack.is(TagUtils.forgeItemTag("tools/wrench"))
-                || stack.is(TagUtils.forgeItemTag("wrenches"))
-                || stack.is(TagUtils.forgeItemTag("wrench"));
+        return stack.is(TAG_TOOLS_WRENCH) || stack.is(TAG_WRENCHES) || stack.is(TAG_WRENCH);
     }
-
 }
