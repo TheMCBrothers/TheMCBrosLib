@@ -89,6 +89,11 @@ public class EnergyBar extends AbstractWidget {
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
     }
 
+    @Override
+    public boolean changeFocus(boolean focus) {
+        return false;
+    }
+
     public enum Size {
         _8x48(8, 48),
         _10x50(10, 50);
