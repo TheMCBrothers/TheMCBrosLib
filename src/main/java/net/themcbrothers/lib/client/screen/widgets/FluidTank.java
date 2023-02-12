@@ -152,4 +152,9 @@ public class FluidTank extends AbstractWidget {
     @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {
     }
+
+    @Override
+    public boolean changeFocus(boolean focus) {
+        return false;
+    }
 }
