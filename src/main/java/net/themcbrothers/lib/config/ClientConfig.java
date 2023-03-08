@@ -1,30 +1,113 @@
 package net.themcbrothers.lib.config;
 
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.themcbrothers.lib.energy.EnergyUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.StringJoiner;
+
+/**
+ * Client configuration
+ */
 public class ClientConfig {
+    private static final Logger LOGGER = LogManager.getLogger();
 
-    private final ForgeConfigSpec.EnumValue<EnergyUnit> enumEnergyUnit;
+    private final ForgeConfigSpec.EnumValue<EnergyUnit> energyUnit;
+    private final ForgeConfigSpec.ConfigValue<String> modNameFormatFriendly;
 
-    public ClientConfig(ForgeConfigSpec.Builder builder) {
+    private String cachedModNameFormat;
+
+    ClientConfig(ForgeConfigSpec.Builder builder) {
         builder.comment("Welcome to the client config file!");
 
         builder.push("gui");
-        this.enumEnergyUnit = builder.comment("Energy Unit rendered in machines").defineEnum("energyUnit", EnergyUnit.FORGE_ENERGY);
+        this.energyUnit = builder
+                .comment("Energy Unit rendered in machines")
+                .translation("config.tmcb_lib.gui.energyUnit")
+                .defineEnum("energyUnit", EnergyUnit.FORGE_ENERGY);
+        builder.pop();
+
+        EnumSet<ChatFormatting> validFormatting = EnumSet.allOf(ChatFormatting.class);
+        validFormatting.remove(ChatFormatting.RESET);
+
+        StringJoiner validColorsJoiner = new StringJoiner(", ");
+        StringJoiner validFormatsJoiner = new StringJoiner(", ");
+
+        for (ChatFormatting chatFormatting : validFormatting) {
+            String lowerCaseName = chatFormatting.getName().toLowerCase(Locale.ROOT);
+            if (chatFormatting.isColor()) {
+                validColorsJoiner.add(lowerCaseName);
+            } else if (chatFormatting.isFormat()) {
+                validFormatsJoiner.add(lowerCaseName);
+            }
+        }
+
+        String validColors = validColorsJoiner.toString();
+        String validFormats = validFormatsJoiner.toString();
+
+        builder.push("formatting");
+        this.modNameFormatFriendly = builder
+                .comment(
+                        "How the mod name should be formatted in the tooltip. Leave blank to disable.",
+                        "Use these formatting colors:", validColors,
+                        "With these formatting options:", validFormats
+                )
+                .translation("config.tmcb_lib.formatting.modNameFormat")
+                .define("modNameFormat", "blue italic");
         builder.pop();
     }
 
-    public EnergyUnit energyUnit = EnergyUnit.FORGE_ENERGY;
-
-    public void bake() {
-        this.energyUnit = this.enumEnergyUnit.get();
+    /**
+     * Gets called when config loads or reloads
+     */
+    void bake() {
+        this.cachedModNameFormat = null;
     }
 
     public void setEnergyUnit(EnergyUnit energyUnit) {
-        this.energyUnit = energyUnit;
-        this.enumEnergyUnit.set(energyUnit);
+        this.energyUnit.set(energyUnit);
         Config.CLIENT_SPEC.save();
     }
 
+    public EnergyUnit getEnergyUnit() {
+        return this.energyUnit.get();
+    }
+
+    /**
+     * Gets and parses the config value of the mod name format setting
+     *
+     * @return Mod Name formatting in tooltips in (non-friendly format)
+     */
+    public String getModNameFormat() {
+        if (this.cachedModNameFormat == null) {
+            this.cachedModNameFormat = parseFriendlyFormat(this.modNameFormatFriendly.get());
+        }
+
+        return this.cachedModNameFormat;
+    }
+
+    private static String parseFriendlyFormat(String friendlyFormat) {
+        if (friendlyFormat.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder format = new StringBuilder();
+        String[] strings = friendlyFormat.split(" ");
+
+        for (String string : strings) {
+            ChatFormatting formatting = ChatFormatting.getByName(string);
+
+            if (formatting != null) {
+                format.append(formatting);
+            } else {
+                LOGGER.error("Invalid format: " + string);
+            }
+        }
+
+        return format.toString();
+    }
 }
