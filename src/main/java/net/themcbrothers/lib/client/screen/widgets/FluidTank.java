@@ -3,6 +3,7 @@ package net.themcbrothers.lib.client.screen.widgets;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.themcbrothers.lib.util.TooltipHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,8 +50,12 @@ public class FluidTank extends AbstractWidget {
 
     @Override
     public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
-        List<Component> list = List.of(TEXT_UTILS.fluidName(this.getFluid()), TEXT_UTILS.fluidWithMax(this.fluidHandler));
-        this.screen.renderTooltip(matrixStack, Lists.transform(list, Component::getVisualOrderText), mouseX, mouseY);
+        List<Component> tooltip = Lists.newArrayList();
+        tooltip.add(TEXT_UTILS.fluidName(this.getFluid()));
+        TooltipHelper.appendAmount(tooltip, this.getFluid().getAmount(), this.getCapacity(), "mB", ChatFormatting.GRAY);
+        TooltipHelper.appendRegistryName(tooltip, this.getFluid().getFluid(), ChatFormatting.DARK_GRAY);
+        TooltipHelper.appendModNameFromFluid(tooltip, this.getFluid());
+        this.screen.renderTooltip(matrixStack, Lists.transform(tooltip, Component::getVisualOrderText), mouseX, mouseY);
     }
 
     public FluidStack getFluid() {
