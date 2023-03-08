@@ -1,6 +1,9 @@
 {
+  "config.tmcb_lib.gui.energyUnit": "Energy Unit",
+  "config.tmcb_lib.gui.energyUnit.comment": "Energy Unit rendered in machines",
+  "config.tmcb_lib.formatting.modNameFormat": "Mod Name Format",
+  "config.tmcb_lib.formatting.modNameFormat.comment": "How the mod name should be formatted in the tooltip. Leave blank to disable.",
   "item.tmcb_lib.wrench": "Wrench",
-
   "misc.tmcb_lib.energy": "%s %s",
   "misc.tmcb_lib.energyWithMax": "%s / %s %s",
   "misc.tmcb_lib.fluidWithMax": "%s / %s mB",
