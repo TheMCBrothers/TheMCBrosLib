@@ -16,8 +16,7 @@ public class WrenchItem extends Item implements Wrench {
     private final Collection<CreativeModeTab> creativeModeTabs = Lists.newArrayList();
 
     public WrenchItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties().stacksTo(1)));
-        this.addToCreativeTabs(CreativeModeTab.TAB_TOOLS);
+        super(properties.apply(new Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS)));
     }
 
     public void addToCreativeTabs(CreativeModeTab... creativeModeTabs) {
