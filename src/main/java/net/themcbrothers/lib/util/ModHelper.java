@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
@@ -14,6 +15,16 @@ import java.util.Optional;
  * Helps with other mods
  */
 public final class ModHelper {
+    /**
+     * Returns an optional resource location
+     *
+     * @param entry Registry Entry
+     * @return Resource Location as Optional
+     */
+    public static Optional<ResourceLocation> registryNameOf(IForgeRegistryEntry<?> entry) {
+        return Optional.ofNullable(entry.getRegistryName());
+    }
+
     /**
      * Gets the Mod ID for the given fluid
      *
@@ -25,7 +36,7 @@ public final class ModHelper {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(fluidStack.getFluid().getRegistryName())
+        return registryNameOf(fluidStack.getFluid())
                 .map(ResourceLocation::getNamespace);
     }
 
