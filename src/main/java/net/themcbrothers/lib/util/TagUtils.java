@@ -10,7 +10,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
-public class TagUtils {
+/**
+ * Helps with creating tags
+ */
+public final class TagUtils {
+    private TagUtils() {
+    }
 
     // ITEM TAGS
 
@@ -53,5 +58,4 @@ public class TagUtils {
     public static TagKey<Fluid> modFluidTag(ResourceLocation id) {
         return FluidTags.create(id);
     }
-
 }
