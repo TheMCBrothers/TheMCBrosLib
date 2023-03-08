@@ -31,7 +31,7 @@ public class EntityTypeDeferredRegister extends DeferredRegisterWrapper<EntityTy
     }
 
     /**
-     * Registers a entity type for the given entity type builder
+     * Registers an entity type for the given entity type builder
      *
      * @param name Entity name
      * @param sup  Entity builder instance
@@ -43,7 +43,7 @@ public class EntityTypeDeferredRegister extends DeferredRegisterWrapper<EntityTy
     }
 
     /**
-     * Registers a entity type for the given entity type builder, and registers a spawn egg for it
+     * Registers an entity type for the given entity type builder, and registers a spawn egg for it
      *
      * @param name      Entity name
      * @param sup       Entity builder instance
