@@ -11,7 +11,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Helps with {@link IEnergyStorage}
  */
-public class EnergyUtils {
+public final class EnergyUtils {
+    private EnergyUtils() {
+    }
+
     /**
      * Get an energy storage from a block entity at a specific pos
      *

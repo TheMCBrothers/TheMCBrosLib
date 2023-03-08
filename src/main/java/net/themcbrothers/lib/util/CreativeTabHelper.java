@@ -18,7 +18,10 @@ import java.util.function.Supplier;
  * Helps with the new 1.19.3 system for {@link CreativeModeTab}s
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = TheMCBrosLib.MOD_ID)
-public class CreativeTabHelper {
+public final class CreativeTabHelper {
+    private CreativeTabHelper() {
+    }
+
     private static final Map<Supplier<? extends ItemLike>, Collection<CreativeModeTab>> ITEM_TO_TABS = Maps.newHashMap();
 
     /**
