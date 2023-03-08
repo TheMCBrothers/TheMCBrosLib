@@ -16,7 +16,10 @@ import java.util.List;
 /**
  * Helps with tooltips, this should only be used on the client side
  */
-public class TooltipHelper {
+public final class TooltipHelper {
+    private TooltipHelper() {
+    }
+
     /**
      * Appends an amount and optional capacity to the tooltip
      *

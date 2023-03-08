@@ -15,6 +15,9 @@ import java.util.Optional;
  * Helps with other mods
  */
 public final class ModHelper {
+    private ModHelper() {
+    }
+
     /**
      * Returns an optional resource location
      *

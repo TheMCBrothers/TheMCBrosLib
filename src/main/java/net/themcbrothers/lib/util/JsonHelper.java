@@ -9,7 +9,7 @@ import net.minecraft.util.GsonHelper;
 /**
  * Utilities to help in parsing JSON
  */
-public class JsonHelper {
+public final class JsonHelper {
     private JsonHelper() {
     }
 

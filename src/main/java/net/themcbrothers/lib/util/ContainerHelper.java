@@ -7,7 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ContainerHelper {
+/**
+ * Helps with menus
+ */
+public final class ContainerHelper {
+    private ContainerHelper() {
+    }
+
     /**
      * Returns the block entity for a container
      *
