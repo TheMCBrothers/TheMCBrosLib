@@ -25,7 +25,7 @@ public class EnergyBar extends AbstractWidget {
     private final EnergyProvider energyProvider;
     private final AbstractContainerScreen<?> screen;
     private final Size size;
-    private EnergyUnit unit = Config.CLIENT_CONFIG.energyUnit;
+    private EnergyUnit unit = Config.CLIENT_CONFIG.getEnergyUnit();
 
     /**
      * @deprecated Use constructor with {@link Size}
