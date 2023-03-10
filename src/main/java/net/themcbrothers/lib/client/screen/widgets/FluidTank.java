@@ -53,8 +53,13 @@ public class FluidTank extends AbstractWidget {
         List<Component> tooltip = Lists.newArrayList();
         tooltip.add(TEXT_UTILS.fluidName(this.getFluid()));
         TooltipHelper.appendAmount(tooltip, this.getFluid().getAmount(), this.getCapacity(), "mB", ChatFormatting.GRAY);
-        TooltipHelper.appendRegistryName(tooltip, this.getFluid().getFluid(), ChatFormatting.DARK_GRAY);
-        TooltipHelper.appendModNameFromFluid(tooltip, this.getFluid());
+
+        // Only append Registry Name and Mod Name when the tank is not empty
+        if (!this.getFluid().isEmpty()) {
+            TooltipHelper.appendRegistryName(tooltip, this.getFluid().getFluid(), ChatFormatting.DARK_GRAY);
+            TooltipHelper.appendModNameFromFluid(tooltip, this.getFluid());
+        }
+
         this.screen.renderTooltip(matrixStack, Lists.transform(tooltip, Component::getVisualOrderText), mouseX, mouseY);
     }
 
