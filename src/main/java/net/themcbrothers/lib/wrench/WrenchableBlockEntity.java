@@ -10,6 +10,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+/**
+ * @deprecated Use {@link WrenchableBlock} on block classes
+ */
+@Deprecated(since = "2.0.4", forRemoval = true)
 public interface WrenchableBlockEntity {
     default BlockEntity getWrenchableBlockEntity() {
         return (BlockEntity) this;
