@@ -1,2 +1,3 @@
-# TheMCBros2016-Lib
- Library mod for our mods
+# TheMCBrosLib
+
+Library mod for our mods
