@@ -43,7 +43,7 @@ public class EnergyBar extends AbstractWidget {
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.setShaderTexture(0, TEXTURE);
@@ -52,9 +52,9 @@ public class EnergyBar extends AbstractWidget {
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         int xOff = this.unit.ordinal() * (this.width * 2 + 2);
         int yOff = this.size.getYOff();
-        this.blit(poseStack, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2);
+        blit(poseStack, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2);
         int i = this.getScaledHeight();
-        this.blit(poseStack, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i);
+        blit(poseStack, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i);
     }
 
     public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
@@ -90,8 +90,8 @@ public class EnergyBar extends AbstractWidget {
     }
 
     @Override
-    public boolean changeFocus(boolean focus) {
-        return false;
+    public void setFocused(boolean focused) {
+        super.setFocused(false);
     }
 
     public enum Size {

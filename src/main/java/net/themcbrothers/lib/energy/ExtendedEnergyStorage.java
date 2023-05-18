@@ -56,20 +56,6 @@ public class ExtendedEnergyStorage extends EnergyStorage {
         }
     }
 
-    /**
-     * @param energy Energy to add or subtract from energy
-     * @deprecated Please use {@link #growEnergy(int energy)} or {@link #consumeEnergy(int energy)}
-     */
-    public void modifyEnergyStored(int energy) {
-        this.energy += energy;
-
-        if (this.energy > this.capacity) {
-            this.energy = this.capacity;
-        } else if (this.energy < 0) {
-            this.energy = 0;
-        }
-    }
-
     public int getMaxReceive() {
         return this.maxReceive;
     }

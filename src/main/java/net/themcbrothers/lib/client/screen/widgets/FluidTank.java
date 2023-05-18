@@ -26,7 +26,6 @@ import static net.themcbrothers.lib.TheMCBrosLib.TEXT_UTILS;
  * Widget for displaying a fluid from a {@link IFluidHandler}
  */
 public class FluidTank extends AbstractWidget {
-
     private static final int TEX_WIDTH = 16;
     private static final int TEX_HEIGHT = 16;
     private static final int MIN_FLUID_HEIGHT = 1;
@@ -41,7 +40,7 @@ public class FluidTank extends AbstractWidget {
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
         this.drawFluid(this.getX(), this.getY(), this.getFluid());
     }
 
@@ -153,7 +152,7 @@ public class FluidTank extends AbstractWidget {
     }
 
     @Override
-    public boolean changeFocus(boolean focus) {
-        return false;
+    public void setFocused(boolean focused) {
+        super.setFocused(false);
     }
 }
