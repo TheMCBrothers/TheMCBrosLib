@@ -1,6 +1,7 @@
 package net.themcbrothers.lib.util;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +42,7 @@ public final class ModHelper {
             return Optional.empty();
         }
 
-        return registryNameOf(Registry.FLUID_REGISTRY, fluidStack.getFluid())
+        return registryNameOf(Registries.FLUID, fluidStack.getFluid())
                 .map(ResourceLocation::getNamespace);
     }
 
