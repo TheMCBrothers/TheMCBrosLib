@@ -4,11 +4,12 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id "com.modrinth.minotaur" version '2.+'
 }
 
 archivesBaseName = "TheMCBrosLib"
 group = "net.themcbrothers"
-version = "$project.mc_version-$project.mod_version"
+version = "$mc_version-$mod_version"
 
 java {
     toolchain {
@@ -161,16 +162,30 @@ publishing {
     }
 }
 
-// publishing on CurseForge
-curseforge {
-    apiKey = getSecret('cf_key')
+var curseForgeKey = getSecret('cf_key')
+var modrinthToken = getSecret('modrinth_token')
 
-    project {
-        id = project.project_id
-        releaseType = project.artifact_type
-        addGameVersion(project.mc_version)
-        mainArtifact(tasks.jar)
+// Publish to CurseForge
+if (curseForgeKey != null) {
+    curseforge {
+        apiKey = curseForgeKey
+
+        project {
+            id = project.curse_project
+            releaseType = project.artifact_type
+            addGameVersion(project.mc_version)
+            mainArtifact(tasks.jar)
+        }
     }
 }
 
-tasks.named("curseforge") { finalizedBy("publish") }
+// Publish to Modrinth
+if (modrinthToken != null) {
+    modrinth {
+        token = getSecret('cf_key')
+        projectId = modrinth_project
+        versionType = artifact_type
+        uploadFile = jar
+        additionalFiles.add(sourcesJar)
+    }
+}
