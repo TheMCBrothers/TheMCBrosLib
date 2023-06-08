@@ -2,11 +2,15 @@ name: Java CI
 
 on:
   push:
+    branches-ignore:
+      - '**-dev'
     paths-ignore:
       - '.github/**'
       - '**.md'
       - '**.txt'
   pull_request:
+    tags-ignore:
+      - '**'
     paths-ignore:
       - '.github/**'
       - '**.md'
@@ -18,8 +22,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      cf_key: ${{ secrets.CURSEFORGE_TOKEN }}
 
     steps:
     - name: Checkout
