@@ -2,16 +2,19 @@ package net.themcbrothers.lib.client.screen.widgets;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -44,11 +47,11 @@ public class FluidTank extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(GuiGraphics poseStack, int pMouseX, int pMouseY, float pPartialTick) {
         this.drawFluid(this.getX(), this.getY(), this.getFluid());
     }
 
-    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
+    public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         List<Component> tooltip = Lists.newArrayList();
         tooltip.add(TEXT_UTILS.fluidName(this.getFluid()));
         TooltipHelper.appendAmount(tooltip, this.getFluid().getAmount(), this.getCapacity(), "mB", ChatFormatting.GRAY);
@@ -59,7 +62,7 @@ public class FluidTank extends AbstractWidget {
             TooltipHelper.appendModNameFromFluid(tooltip, this.getFluid());
         }
 
-        this.screen.renderTooltip(matrixStack, Lists.transform(tooltip, Component::getVisualOrderText), mouseX, mouseY);
+        guiGraphics.renderTooltip(this.screen.getMinecraft().font, Lists.transform(tooltip, Component::getVisualOrderText), mouseX, mouseY);
     }
 
     public FluidStack getFluid() {

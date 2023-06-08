@@ -2,7 +2,7 @@ package net.themcbrothers.lib.client.screen.widgets;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -27,13 +27,6 @@ public class EnergyBar extends AbstractWidget {
     private final Size size;
     private EnergyUnit unit = Config.CLIENT_CONFIG.getEnergyUnit();
 
-    /**
-     * @deprecated Use constructor with {@link Size}
-     */
-    public EnergyBar(int xIn, int yIn, EnergyProvider energyProvider, AbstractContainerScreen<?> screen) {
-        this(xIn, yIn, Size._8x48, energyProvider, screen);
-    }
-
     public EnergyBar(int xIn, int yIn, Size size, EnergyProvider energyProvider, AbstractContainerScreen<?> screen) {
         super(xIn, yIn, size.width, size.height, Component.empty());
         this.active = true;
@@ -43,7 +36,7 @@ public class EnergyBar extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.setShaderTexture(0, TEXTURE);
@@ -52,14 +45,14 @@ public class EnergyBar extends AbstractWidget {
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         int xOff = this.unit.ordinal() * (this.width * 2 + 2);
         int yOff = this.size.getYOff();
-        blit(poseStack, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2);
+        guiGraphics.blit(TEXTURE, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2);
         int i = this.getScaledHeight();
-        blit(poseStack, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i);
+        guiGraphics.blit(TEXTURE, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i);
     }
 
-    public void renderToolTip(PoseStack matrixStack, int mouseX, int mouseY) {
+    public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         Component energy = TEXT_UTILS.energyWithMax(this.energyProvider.getEnergyStored(), this.energyProvider.getMaxEnergyStored(), this.unit);
-        this.screen.renderTooltip(matrixStack, energy, mouseX, mouseY);
+        guiGraphics.renderTooltip(this.screen.getMinecraft().font, energy, mouseX, mouseY);
     }
 
     @Override

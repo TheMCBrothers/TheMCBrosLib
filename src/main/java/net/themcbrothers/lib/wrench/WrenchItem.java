@@ -13,7 +13,7 @@ import java.util.function.Function;
 public class WrenchItem extends Item implements Wrench {
     public WrenchItem(Function<Properties, Properties> properties) {
         super(properties.apply(new Properties().stacksTo(1)));
-        CreativeTabHelper.addToCreativeTabs(() -> this, CreativeModeTabs.TOOLS_AND_UTILITIES);
+        CreativeTabHelper.addToCreativeTabs(() -> this, CreativeModeTabs.TOOLS_AND_UTILITIES.location());
     }
 
     @Override

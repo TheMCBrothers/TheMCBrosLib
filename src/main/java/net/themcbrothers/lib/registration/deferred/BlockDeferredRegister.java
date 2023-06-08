@@ -1,6 +1,7 @@
 package net.themcbrothers.lib.registration.deferred;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -40,14 +41,16 @@ public class BlockDeferredRegister extends DeferredRegisterWrapper<Block> {
         return this.registerNoItem(name, () -> new Block(properties));
     }
 
-    public <B extends Block> ItemObject<B> register(String name, Supplier<B> block, Function<? super B, ? extends BlockItem> item, CreativeModeTab... tabs) {
+    @SafeVarargs
+    public final <B extends Block> ItemObject<B> register(String name, Supplier<B> block, Function<? super B, ? extends BlockItem> item, ResourceKey<CreativeModeTab>... tabs) {
         RegistryObject<B> blockObj = this.register.register(name, block);
         this.itemRegister.register(name, () -> item.apply(blockObj.get()));
         CreativeTabHelper.addToCreativeTabs(blockObj, tabs);
         return new ItemObject<>(blockObj);
     }
 
-    public ItemObject<Block> register(String name, BlockBehaviour.Properties properties, Function<? super Block, ? extends BlockItem> item, CreativeModeTab... tabs) {
+    @SafeVarargs
+    public final ItemObject<Block> register(String name, BlockBehaviour.Properties properties, Function<? super Block, ? extends BlockItem> item, ResourceKey<CreativeModeTab>... tabs) {
         RegistryObject<Block> blockObj = this.register.register(name, () -> new Block(properties));
         this.itemRegister.register(name, () -> item.apply(blockObj.get()));
         CreativeTabHelper.addToCreativeTabs(blockObj, tabs);

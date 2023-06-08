@@ -1,6 +1,7 @@
 package net.themcbrothers.lib.registration.deferred;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.themcbrothers.lib.registration.object.ItemObject;
@@ -25,13 +26,23 @@ public class ItemDeferredRegister extends DeferredRegisterWrapper<Item> {
      * @param <I>  Item type
      * @return Item object
      */
-    public <I extends Item> ItemObject<I> register(String name, Supplier<I> item, CreativeModeTab... tabs) {
+    @SafeVarargs
+    public final <I extends Item> ItemObject<I> register(String name, Supplier<I> item, ResourceKey<CreativeModeTab>... tabs) {
         ItemObject<I> object = new ItemObject<>(this.register.register(name, item));
         CreativeTabHelper.addToCreativeTabs(object, tabs);
         return object;
     }
 
-    public ItemObject<Item> register(String name, Item.Properties properties, CreativeModeTab... tabs) {
+    /**
+     * Registers a standard item with the given properties
+     *
+     * @param name       Registry name
+     * @param properties Item properties
+     * @param tabs       Creative mode tabs
+     * @return Item object
+     */
+    @SafeVarargs
+    public final ItemObject<Item> register(String name, Item.Properties properties, ResourceKey<CreativeModeTab>... tabs) {
         ItemObject<Item> object = new ItemObject<>(this.register.register(name, () -> new Item(properties)));
         CreativeTabHelper.addToCreativeTabs(object, tabs);
         return object;

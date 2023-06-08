@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -27,7 +28,7 @@ public final class ContainerHelper {
         Objects.requireNonNull(inv, "inv cannot be null");
         Objects.requireNonNull(data, "data cannot be null");
 
-        final BlockEntity blockEntity = inv.player.level.getBlockEntity(data.readBlockPos());
+        final BlockEntity blockEntity = inv.player.level().getBlockEntity(data.readBlockPos());
         if (clazz.isInstance(blockEntity)) {
             return clazz.cast(blockEntity);
         }
