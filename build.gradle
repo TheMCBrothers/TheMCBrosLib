@@ -185,7 +185,7 @@ if (curseForgeKey != null) {
 // Publish to Modrinth
 if (modrinthToken != null) {
     modrinth {
-        token = getSecret('cf_key')
+        token = modrinthToken
         projectId = modrinth_project
         versionType = artifact_type
         uploadFile = jar
