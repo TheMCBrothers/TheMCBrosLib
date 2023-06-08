@@ -153,7 +153,7 @@ publishing {
                 password = getSecret('nexus_pwd')
             }
 
-            if (project.version.endsWith('-SNAPSHOT')) {
+            if (version.endsWith('-SNAPSHOT')) {
                 url 'https://nexus.themcbrothers.net/repository/maven-snapshots/'
             } else {
                 url 'https://nexus.themcbrothers.net/repository/maven-releases/'
@@ -182,7 +182,7 @@ if (curseForgeKey != null) {
 // Publish to Modrinth
 if (modrinthToken != null) {
     modrinth {
-        token = getSecret('cf_key')
+        token = modrinthToken
         projectId = modrinth_project
         versionType = artifact_type
         uploadFile = jar
