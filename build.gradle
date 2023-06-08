@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "net.themcbrothers"
-version = "$mc_version-$mod_version"
+version = "$minecraft_version-$mod_version"
 
 base {
     archivesName = "TheMCBrosLib"
@@ -80,14 +80,14 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 processResources {
     filesMatching('META-INF/mods.toml') {
         expand 'file': ['jarVersion': version],
-                'loader_version': loader_version,
-                'forge_range': forge_range,
-                'minecraft_range': minecraft_range
+                'loader_version_range': loader_version_range,
+                'forge_version_range': forge_version_range,
+                'minecraft_version_range': minecraft_version_range
     }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // Mod dependencies
 }
@@ -176,7 +176,7 @@ if (curseForgeKey != null) {
         project {
             id = project.curse_project
             releaseType = project.artifact_type
-            addGameVersion(project.mc_version)
+            addGameVersion(project.minecraft_version)
             mainArtifact(tasks.jar)
         }
     }
