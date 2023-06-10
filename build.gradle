@@ -94,13 +94,14 @@ dependencies {
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
+    exclude 'net/themcbrothers/lib/datagen/**'
     manifest {
         attributes([
                 "Specification-Title"     : "tmcb_lib",
                 "Specification-Vendor"    : "TheMCBrothers",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Version"  : jar.archiveVersion,
                 "Implementation-Vendor"   : "TheMCBrothers",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
@@ -111,6 +112,7 @@ sourcesJar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     archiveClassifier.set('sources')
     from sourceSets.main.allJava;
+    exclude 'net/themcbrothers/lib/datagen/**'
 }
 
 artifacts {
@@ -156,7 +158,7 @@ publishing {
                 password = getSecret('nexus_pwd')
             }
 
-            if (project.version.endsWith('-SNAPSHOT')) {
+            if (version.endsWith('-SNAPSHOT')) {
                 url 'https://nexus.themcbrothers.net/repository/maven-snapshots/'
             } else {
                 url 'https://nexus.themcbrothers.net/repository/maven-releases/'
