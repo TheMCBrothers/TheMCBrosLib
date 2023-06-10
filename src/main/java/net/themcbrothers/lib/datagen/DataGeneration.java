@@ -21,5 +21,6 @@ public class DataGeneration {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
         generator.addProvider(event.includeServer(), new LibraryTagsProvider.Blocks(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new LibraryRecipeProvider(packOutput));
     }
 }
