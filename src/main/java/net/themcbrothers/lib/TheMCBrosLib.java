@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.themcbrothers.lib.config.Config;
+import net.themcbrothers.lib.crafting.FluidContainerIngredient;
 import net.themcbrothers.lib.registration.deferred.ItemDeferredRegister;
 import net.themcbrothers.lib.registration.object.ItemObject;
 import net.themcbrothers.lib.util.ComponentFormatter;
@@ -62,7 +64,7 @@ public class TheMCBrosLib {
     @SubscribeEvent
     public void registerRecipeSerializers(RegisterEvent event) {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-//            CraftingHelper.register(rl("fluid"), FluidItemIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(FluidContainerIngredient.ID, FluidContainerIngredient.SERIALIZER);
         }
     }
 
