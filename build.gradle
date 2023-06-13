@@ -178,8 +178,9 @@ if (curseForgeKey != null) {
         project {
             id = project.curse_project
             releaseType = project.artifact_type
-            addGameVersion(project.minecraft_version)
-            mainArtifact(tasks.jar)
+            gameVersionStrings.addAll(supported_minecraft_versions.split(", ?"))
+            mainArtifact tasks.jar
+            addArtifact tasks.sourcesJar
         }
     }
 }
@@ -190,7 +191,8 @@ if (modrinthToken != null) {
         token = modrinthToken
         projectId = modrinth_project
         versionType = artifact_type
-        uploadFile = jar
-        additionalFiles.add(sourcesJar)
+        uploadFile = tasks.jar
+        additionalFiles.add(tasks.sourcesJar)
+        gameVersions.addAll(supported_minecraft_versions.split(", ?"))
     }
 }
