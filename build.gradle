@@ -84,7 +84,7 @@ processResources {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 
     // Mod dependencies
 }
@@ -97,7 +97,7 @@ jar {
                 "Specification-Vendor"    : "TheMCBrothers",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
+                "Implementation-Version"  : jar.archiveVersion,
                 "Implementation-Vendor"   : "TheMCBrothers",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
@@ -171,9 +171,9 @@ if (curseForgeKey != null) {
         apiKey = curseForgeKey
 
         project {
-            id = project.curse_project
-            releaseType = project.artifact_type
-            addGameVersion(project.mc_version)
+            id = curse_project
+            releaseType = artifact_type
+            addGameVersion(mc_version)
             mainArtifact(tasks.jar)
         }
     }
@@ -185,7 +185,7 @@ if (modrinthToken != null) {
         token = modrinthToken
         projectId = modrinth_project
         versionType = artifact_type
-        uploadFile = jar
+        uploadFile = tasks.jar
         additionalFiles.add(sourcesJar)
     }
 }
