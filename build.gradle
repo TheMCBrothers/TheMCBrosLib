@@ -87,7 +87,7 @@ processResources {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
 
     // Mod dependencies
 }
@@ -111,7 +111,7 @@ jar {
 sourcesJar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     archiveClassifier.set('sources')
-    from sourceSets.main.allJava;
+    from sourceSets.main.allJava
     exclude 'net/themcbrothers/lib/datagen/**'
 }
 
@@ -180,7 +180,6 @@ if (curseForgeKey != null) {
             releaseType = project.artifact_type
             gameVersionStrings.addAll(supported_minecraft_versions.split(", ?"))
             mainArtifact tasks.jar
-            addArtifact tasks.sourcesJar
         }
     }
 }
