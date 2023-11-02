@@ -4,8 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.StringRepresentable;
-import net.minecraftforge.fml.ModList;
-
+import net.neoforged.fml.ModList;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Supplier;

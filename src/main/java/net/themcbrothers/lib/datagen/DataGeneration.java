@@ -8,10 +8,10 @@ import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.themcbrothers.lib.TheMCBrosLib;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class DataGeneration {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
         generator.addProvider(event.includeServer(), new LibraryTagsProvider.Blocks(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new LibraryRecipeProvider(packOutput));
+        generator.addProvider(event.includeServer(), new LibraryRecipeProvider(packOutput, lookupProvider));
 
         // pack.mcmeta
         generator.addProvider(true, new PackMetadataGenerator(packOutput))

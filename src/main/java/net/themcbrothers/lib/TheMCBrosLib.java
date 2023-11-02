@@ -10,20 +10,18 @@ import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.themcbrothers.lib.config.Config;
-import net.themcbrothers.lib.crafting.FluidContainerIngredient;
 import net.themcbrothers.lib.registration.deferred.ItemDeferredRegister;
 import net.themcbrothers.lib.registration.object.ItemObject;
 import net.themcbrothers.lib.util.ComponentFormatter;
@@ -45,14 +43,14 @@ public class TheMCBrosLib {
             () -> new WrenchItem(properties -> properties));
 
     public TheMCBrosLib() {
-        ForgeMod.enableMilkFluid();
+        NeoForgeMod.enableMilkFluid();
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         TheMCBrosLib.ITEMS.register(modEventBus);
 
         modEventBus.register(this);
 
-        MinecraftForge.EVENT_BUS.addListener(this::onPlayerInteractWithEntity);
+        NeoForge.EVENT_BUS.addListener(this::onPlayerInteractWithEntity);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
     }
@@ -64,7 +62,7 @@ public class TheMCBrosLib {
     @SubscribeEvent
     public void registerRecipeSerializers(RegisterEvent event) {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-            CraftingHelper.register(FluidContainerIngredient.ID, FluidContainerIngredient.SERIALIZER);
+//            CraftingHelper.register(FluidContainerIngredient.ID, FluidContainerIngredient.SERIALIZER);
         }
     }
 

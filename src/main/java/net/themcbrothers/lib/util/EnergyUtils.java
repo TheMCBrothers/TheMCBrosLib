@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -27,7 +27,7 @@ public final class EnergyUtils {
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         if (blockEntity != null) {
-            return blockEntity.getCapability(ForgeCapabilities.ENERGY, side).map(energyStorage -> energyStorage).orElse(null);
+            return blockEntity.getCapability(Capabilities.ENERGY, side).map(energyStorage -> energyStorage).orElse(null);
         }
 
         return null;

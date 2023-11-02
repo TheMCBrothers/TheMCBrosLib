@@ -1,22 +1,23 @@
 package net.themcbrothers.lib.datagen;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 import net.themcbrothers.lib.TheMCBrosLib;
 
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 public class LibraryRecipeProvider extends VanillaRecipeProvider {
-    public LibraryRecipeProvider(PackOutput output) {
-        super(output);
+    public LibraryRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(output, lookupProvider);
     }
 
     @Override
-    protected void buildRecipes(Consumer<FinishedRecipe> recipeConsumer) {
+    protected void buildRecipes(RecipeOutput recipeConsumer) {
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, TheMCBrosLib.WRENCH)
                 .pattern("X X")
                 .pattern(" X ")

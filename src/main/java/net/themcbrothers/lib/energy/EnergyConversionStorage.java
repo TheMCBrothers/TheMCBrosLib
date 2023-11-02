@@ -1,7 +1,7 @@
 package net.themcbrothers.lib.energy;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
  * Implementation of {@link IEnergyStorage} for items that hold energy.

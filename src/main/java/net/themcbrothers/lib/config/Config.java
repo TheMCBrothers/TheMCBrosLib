@@ -1,20 +1,19 @@
 package net.themcbrothers.lib.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.themcbrothers.lib.TheMCBrosLib;
+import org.apache.commons.lang3.tuple.Pair;
 
 @Mod.EventBusSubscriber(modid = TheMCBrosLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
-
     public static final ClientConfig CLIENT_CONFIG;
-    public static final ForgeConfigSpec CLIENT_SPEC;
+    public static final ModConfigSpec CLIENT_SPEC;
 
     static {
-        final Pair<ClientConfig, ForgeConfigSpec> clientConfigPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+        final Pair<ClientConfig, ModConfigSpec> clientConfigPair = new ModConfigSpec.Builder().configure(ClientConfig::new);
 
         CLIENT_CONFIG = clientConfigPair.getLeft();
         CLIENT_SPEC = clientConfigPair.getRight();
@@ -25,5 +24,4 @@ public class Config {
         if (event.getConfig().getSpec() == CLIENT_SPEC)
             CLIENT_CONFIG.bake();
     }
-
 }

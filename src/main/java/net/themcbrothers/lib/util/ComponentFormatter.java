@@ -4,9 +4,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.common.I18nExtension;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.themcbrothers.lib.energy.EnergyUnit;
 
 /**
@@ -96,6 +96,6 @@ public class ComponentFormatter {
      * @return True if it can be translated
      */
     public static boolean canTranslate(String key) {
-        return !ForgeI18n.getPattern(key).equals(key);
+        return !I18nExtension.getPattern(key).equals(key);
     }
 }

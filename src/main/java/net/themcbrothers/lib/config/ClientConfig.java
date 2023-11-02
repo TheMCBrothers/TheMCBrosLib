@@ -1,7 +1,7 @@
 package net.themcbrothers.lib.config;
 
 import net.minecraft.ChatFormatting;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.themcbrothers.lib.energy.EnergyUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,12 +16,12 @@ import java.util.StringJoiner;
 public class ClientConfig {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final ForgeConfigSpec.EnumValue<EnergyUnit> energyUnit;
-    private final ForgeConfigSpec.ConfigValue<String> modNameFormatFriendly;
+    private final ModConfigSpec.EnumValue<EnergyUnit> energyUnit;
+    private final ModConfigSpec.ConfigValue<String> modNameFormatFriendly;
 
     private String cachedModNameFormat;
 
-    ClientConfig(ForgeConfigSpec.Builder builder) {
+    ClientConfig(ModConfigSpec.Builder builder) {
         builder.comment("Welcome to the client config file!");
 
         builder.push("gui");

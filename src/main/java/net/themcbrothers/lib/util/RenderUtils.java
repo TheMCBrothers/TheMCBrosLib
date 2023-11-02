@@ -2,8 +2,8 @@ package net.themcbrothers.lib.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
 import net.themcbrothers.lib.client.model.fluid.FluidCuboid;
 import net.themcbrothers.lib.client.render.FluidRenderer;
 

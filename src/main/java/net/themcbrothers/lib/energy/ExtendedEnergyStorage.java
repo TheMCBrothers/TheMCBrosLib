@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.energy;
 
-import net.minecraftforge.energy.EnergyStorage;
+import net.neoforged.neoforge.energy.EnergyStorage;
 
 /**
  * Extended implementation of {@link EnergyStorage}

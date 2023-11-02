@@ -6,7 +6,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
 import net.themcbrothers.lib.TheMCBrosLib;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +69,7 @@ public class EnergySlot extends Slot {
      * @return {@code true} if the given {@link ItemStack} valid for an {@link EnergySlot}, otherwise {@code false}
      */
     public static boolean isValid(ItemStack stack, ItemMode itemMode) {
-        return stack.getCapability(ForgeCapabilities.ENERGY).map(energyStorage -> switch (itemMode) {
+        return stack.getCapability(Capabilities.ENERGY).map(energyStorage -> switch (itemMode) {
             case EXTRACT -> energyStorage.canExtract();
             case RECEIVE -> energyStorage.canReceive();
             case EXTRACT_AND_RECEIVE -> energyStorage.canExtract() && energyStorage.canReceive();

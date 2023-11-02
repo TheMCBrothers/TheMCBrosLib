@@ -6,10 +6,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.CreativeModeTabRegistry;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.CreativeModeTabRegistry;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.themcbrothers.lib.TheMCBrosLib;
 
 import java.util.Arrays;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Helps with the new 1.19.3 system for {@link CreativeModeTab}s
+ * Helps with the new system for {@link CreativeModeTab}s
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = TheMCBrosLib.MOD_ID)
 public final class CreativeTabHelper {

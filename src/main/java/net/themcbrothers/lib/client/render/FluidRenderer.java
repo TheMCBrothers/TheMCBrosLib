@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.themcbrothers.lib.client.model.fluid.FluidCuboid;
 import net.themcbrothers.lib.client.model.fluid.FluidCuboid.FluidFace;
 import org.joml.Matrix4f;
@@ -146,7 +146,7 @@ public class FluidRenderer {
 
         // if rotating by 90 or 270, swap U and V
         float minU, maxU, minV, maxV;
-        double size = flowing ? 8 : 16;
+        float size = flowing ? 8 : 16;
         if ((rotation % 180) == 90) {
             minU = sprite.getU(v1 * size);
             maxU = sprite.getU(v2 * size);

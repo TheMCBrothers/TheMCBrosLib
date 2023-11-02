@@ -8,7 +8,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.versions.forge.ForgeVersion;
 
 /**
  * Helps with creating tags
@@ -20,7 +19,7 @@ public final class TagUtils {
     // ITEM TAGS
 
     public static TagKey<Item> forgeItemTag(String name) {
-        return ItemTags.create(new ResourceLocation(ForgeVersion.MOD_ID, name));
+        return ItemTags.create(new ResourceLocation("forge", name));
     }
 
     public static TagKey<Item> modItemTag(String modID, String name) {
@@ -34,7 +33,7 @@ public final class TagUtils {
     // BLOCK TAGS
 
     public static TagKey<Block> forgeBlockTag(String name) {
-        return BlockTags.create(new ResourceLocation(ForgeVersion.MOD_ID, name));
+        return BlockTags.create(new ResourceLocation("forge", name));
     }
 
     public static TagKey<Block> modBlockTag(String modID, String name) {
@@ -48,7 +47,7 @@ public final class TagUtils {
     // FLUID TAGS
 
     public static TagKey<Fluid> forgeFluidTag(String id) {
-        return FluidTags.create(new ResourceLocation(ForgeVersion.MOD_ID, id));
+        return FluidTags.create(new ResourceLocation("forge", id));
     }
 
     public static TagKey<Fluid> modFluidTag(String modID, String id) {

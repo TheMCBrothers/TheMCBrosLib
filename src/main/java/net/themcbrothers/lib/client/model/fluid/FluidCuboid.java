@@ -8,7 +8,6 @@ import net.minecraft.util.GsonHelper;
 import net.themcbrothers.lib.util.JsonHelper;
 import net.themcbrothers.lib.util.ModelHelper;
 import org.joml.Vector3f;
-
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.EnumMap;
