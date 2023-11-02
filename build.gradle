@@ -3,8 +3,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0, 6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id "com.modrinth.minotaur" version '2.+'
+    id 'me.modmuss50.mod-publish-plugin' version '0.4.+'
 }
 
 group = "net.themcbrothers"
@@ -126,21 +125,6 @@ jar.finalizedBy('reobfJar')
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 //publish.dependsOn('reobfJar')
 
-private String getSecret(String key) {
-    def secret = System.getenv(key)
-    if (secret != null) {
-        return secret.trim()
-    }
-
-    File secretFile = file('secrets.properties')
-    if (secretFile.canRead()) {
-        Properties secretProps = new Properties()
-        secretProps.load(new FileInputStream(secretFile))
-        return secretProps.getProperty(key).toString()
-    }
-    return null
-}
-
 // publishing on NEXUS
 publishing {
     publications { PublicationContainer publicationContainer ->
@@ -154,8 +138,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = getSecret('nexus_uname')
-                password = getSecret('nexus_pwd')
+                username = providers.environmentVariable('nexus_uname')
+                password = providers.environmentVariable('nexus_pwd')
             }
 
             if (version.endsWith('-SNAPSHOT')) {
@@ -167,31 +151,35 @@ publishing {
     }
 }
 
-var curseForgeKey = getSecret('cf_key')
-var modrinthToken = getSecret('modrinth_token')
+var curseForgeKey = providers.environmentVariable('cf_key')
+var modrinthToken = providers.environmentVariable('modrinth_token')
 
-// Publish to CurseForge
-if (curseForgeKey != null) {
-    curseforge {
-        apiKey = curseForgeKey
+publishMods {
+    file = jar.archiveFile
+    type = artifact_type == 'release' ? STABLE : artifact_type == 'beta' ? BETA : ALPHA
 
-        project {
-            id = project.curse_project
-            releaseType = project.artifact_type
-            gameVersionStrings.addAll(supported_minecraft_versions.split(", ?"))
-            mainArtifact tasks.jar
+    modLoaders.add("forge")
+
+    // Publish to CurseForge
+    if (curseForgeKey.isPresent()) {
+        curseforge {
+            accessToken = curseForgeKey
+            projectId = curse_project
+            minecraftVersions.add(minecraft_version)
+        }
+    }
+
+    // Publish to Modrinth
+    if (modrinthToken.isPresent()) {
+        modrinth {
+            accessToken = modrinthToken
+            projectId = modrinth_project
+            displayName = version
+            minecraftVersions.add(minecraft_version)
         }
     }
 }
 
-// Publish to Modrinth
-if (modrinthToken != null) {
-    modrinth {
-        token = modrinthToken
-        projectId = modrinth_project
-        versionType = artifact_type
-        uploadFile = tasks.jar
-        additionalFiles.add(tasks.sourcesJar)
-        gameVersions.addAll(supported_minecraft_versions.split(", ?"))
-    }
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
