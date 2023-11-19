@@ -4,7 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.themcbrothers.lib.registration.object.ItemObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.themcbrothers.lib.util.CreativeTabHelper;
 
 import java.util.function.Supplier;
@@ -27,8 +27,8 @@ public class ItemDeferredRegister extends DeferredRegisterWrapper<Item> {
      * @return Item object
      */
     @SafeVarargs
-    public final <I extends Item> ItemObject<I> register(String name, Supplier<I> item, ResourceKey<CreativeModeTab>... tabs) {
-        ItemObject<I> object = new ItemObject<>(this.register.register(name, item));
+    public final <I extends Item> DeferredHolder<Item, I> register(String name, Supplier<I> item, ResourceKey<CreativeModeTab>... tabs) {
+        var object = this.register.register(name, item);
         CreativeTabHelper.addToCreativeTabs(object, tabs);
         return object;
     }
@@ -42,8 +42,8 @@ public class ItemDeferredRegister extends DeferredRegisterWrapper<Item> {
      * @return Item object
      */
     @SafeVarargs
-    public final ItemObject<Item> register(String name, Item.Properties properties, ResourceKey<CreativeModeTab>... tabs) {
-        ItemObject<Item> object = new ItemObject<>(this.register.register(name, () -> new Item(properties)));
+    public final DeferredHolder<Item, Item> register(String name, Item.Properties properties, ResourceKey<CreativeModeTab>... tabs) {
+        var object = this.register.register(name, () -> new Item(properties));
         CreativeTabHelper.addToCreativeTabs(object, tabs);
         return object;
     }

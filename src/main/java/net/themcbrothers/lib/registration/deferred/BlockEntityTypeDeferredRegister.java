@@ -8,7 +8,7 @@ import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -41,8 +41,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegisterWrapper<Blo
      * @param block   Single block to add
      * @return Registry object instance
      */
-    @SuppressWarnings("DataFlowIssue")
-    public <T extends BlockEntity> RegistryObject<BlockEntityType<T>> register(String name, BlockEntityType.BlockEntitySupplier<? extends T> factory, Supplier<? extends Block> block) {
+    public <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> register(String name, BlockEntityType.BlockEntitySupplier<? extends T> factory, Supplier<? extends Block> block) {
         return this.register.register(name, () -> BlockEntityType.Builder.<T>of(factory, block.get()).build(getType(name)));
     }
 
@@ -55,7 +54,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegisterWrapper<Blo
      * @return Registry object instance
      */
     @SuppressWarnings("DataFlowIssue")
-    public <T extends BlockEntity> RegistryObject<BlockEntityType<T>> register(String name, BlockEntityType.BlockEntitySupplier<? extends T> factory, Consumer<ImmutableSet.Builder<Block>> blockCollector) {
+    public <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> register(String name, BlockEntityType.BlockEntitySupplier<? extends T> factory, Consumer<ImmutableSet.Builder<Block>> blockCollector) {
         return this.register.register(name, () -> {
             ImmutableSet.Builder<Block> blocks = new ImmutableSet.Builder<>();
             blockCollector.accept(blocks);

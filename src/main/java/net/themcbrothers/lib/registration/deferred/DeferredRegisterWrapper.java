@@ -4,8 +4,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
+
 import java.util.Collection;
 
 /**
@@ -43,9 +44,9 @@ public abstract class DeferredRegisterWrapper<T> {
     }
 
     /**
-     * @return All entries as {@link RegistryObject}s
+     * @return All entries as {@link DeferredHolder}s
      */
-    public Collection<RegistryObject<T>> getEntries() {
+    public Collection<DeferredHolder<T, ? extends T>> getEntries() {
         return this.register.getEntries();
     }
 

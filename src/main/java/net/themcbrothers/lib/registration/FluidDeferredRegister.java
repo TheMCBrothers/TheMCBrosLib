@@ -1,5 +1,6 @@
 package net.themcbrothers.lib.registration;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -11,11 +12,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Deprecated
 public class FluidDeferredRegister {
@@ -30,17 +32,17 @@ public class FluidDeferredRegister {
 
     public FluidDeferredRegister(String modId) {
         this.modId = modId;
-        this.fluidTypeRegister = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, modId);
-        this.fluidRegister = DeferredRegister.create(ForgeRegistries.Keys.FLUIDS, modId);
-        this.blockRegister = DeferredRegister.create(ForgeRegistries.Keys.BLOCKS, modId);
-        this.itemRegister = DeferredRegister.create(ForgeRegistries.Keys.ITEMS, modId);
+        this.fluidTypeRegister = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, modId);
+        this.fluidRegister = DeferredRegister.create(Registries.FLUID, modId);
+        this.blockRegister = DeferredRegister.create(Registries.BLOCK, modId);
+        this.itemRegister = DeferredRegister.create(Registries.ITEM, modId);
     }
 
     public FluidRegistryObject<BaseFlowingFluid.Source, BaseFlowingFluid.Flowing, LiquidBlock, BucketItem> register(String name, FluidType.Properties builder, Function<Item.Properties, Item.Properties> bucketProps) {
         String flowingName = "flowing_" + name;
         String bucketName = name + "_bucket";
 
-        RegistryObject<FluidType> typeObj = this.fluidTypeRegister.register(name, () -> new FluidType(builder));
+        Supplier<FluidType> typeObj = this.fluidTypeRegister.register(name, () -> new FluidType(builder));
 
         FluidRegistryObject<BaseFlowingFluid.Source, BaseFlowingFluid.Flowing, LiquidBlock, BucketItem> fluidRegistryObject = new FluidRegistryObject<>(modId, name);
         BaseFlowingFluid.Properties fluidProperties = new BaseFlowingFluid.Properties(typeObj, fluidRegistryObject::getStillFluid, fluidRegistryObject::getFlowingFluid)

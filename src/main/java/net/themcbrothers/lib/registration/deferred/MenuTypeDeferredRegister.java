@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.IContainerFactory;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
  * Deferred register for menu types, automatically mapping a factory argument in {@link IMenuTypeExtension}
@@ -22,7 +22,7 @@ public class MenuTypeDeferredRegister extends DeferredRegisterWrapper<MenuType<?
      * @param factory Menu factory
      * @return Registry object containing the menu type
      */
-    public <C extends AbstractContainerMenu> RegistryObject<MenuType<C>> register(String name, IContainerFactory<C> factory) {
+    public <C extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<C>> register(String name, IContainerFactory<C> factory) {
         return this.register.register(name, () -> IMenuTypeExtension.create(factory));
     }
 }

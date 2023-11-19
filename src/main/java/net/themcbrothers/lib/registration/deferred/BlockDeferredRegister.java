@@ -8,9 +8,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
-import net.themcbrothers.lib.registration.object.ItemObject;
 import net.themcbrothers.lib.util.CreativeTabHelper;
 
 import java.util.function.Function;
@@ -33,27 +32,27 @@ public class BlockDeferredRegister extends DeferredRegisterWrapper<Block> {
         this.itemRegister.register(bus);
     }
 
-    public <B extends Block> RegistryObject<B> registerNoItem(String name, Supplier<B> block) {
+    public <B extends Block> DeferredHolder<Block, B> registerNoItem(String name, Supplier<B> block) {
         return this.register.register(name, block);
     }
 
-    public RegistryObject<Block> registerNoItem(String name, BlockBehaviour.Properties properties) {
+    public DeferredHolder<Block, Block> registerNoItem(String name, BlockBehaviour.Properties properties) {
         return this.registerNoItem(name, () -> new Block(properties));
     }
 
     @SafeVarargs
-    public final <B extends Block> ItemObject<B> register(String name, Supplier<B> block, Function<? super B, ? extends BlockItem> item, ResourceKey<CreativeModeTab>... tabs) {
-        RegistryObject<B> blockObj = this.register.register(name, block);
+    public final <B extends Block> DeferredHolder<Block, B> register(String name, Supplier<B> block, Function<? super B, ? extends BlockItem> item, ResourceKey<CreativeModeTab>... tabs) {
+        var blockObj = this.register.register(name, block);
         this.itemRegister.register(name, () -> item.apply(blockObj.get()));
         CreativeTabHelper.addToCreativeTabs(blockObj, tabs);
-        return new ItemObject<>(blockObj);
+        return blockObj;
     }
 
     @SafeVarargs
-    public final ItemObject<Block> register(String name, BlockBehaviour.Properties properties, Function<? super Block, ? extends BlockItem> item, ResourceKey<CreativeModeTab>... tabs) {
-        RegistryObject<Block> blockObj = this.register.register(name, () -> new Block(properties));
+    public final DeferredHolder<Block, Block> register(String name, BlockBehaviour.Properties properties, Function<? super Block, ? extends BlockItem> item, ResourceKey<CreativeModeTab>... tabs) {
+        var blockObj = this.register.register(name, () -> new Block(properties));
         this.itemRegister.register(name, () -> item.apply(blockObj.get()));
         CreativeTabHelper.addToCreativeTabs(blockObj, tabs);
-        return new ItemObject<>(blockObj);
+        return blockObj;
     }
 }

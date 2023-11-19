@@ -42,6 +42,9 @@ public class TheMCBrosLib {
     public static final ItemObject<WrenchItem> WRENCH = TheMCBrosLib.ITEMS.register("wrench",
             () -> new WrenchItem(properties -> properties));
 
+//    private static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES = DeferredRegister.create(ForgeRegistries.Keys.INGREDIENT_TYPES, MOD_ID);
+//    public static final RegistryObject<IngredientType<FluidContainerIngredient>> FLUID_CONTAINER = INGREDIENT_TYPES.register("fluid_container", () -> new IngredientType<>());
+
     public TheMCBrosLib() {
         NeoForgeMod.enableMilkFluid();
 
