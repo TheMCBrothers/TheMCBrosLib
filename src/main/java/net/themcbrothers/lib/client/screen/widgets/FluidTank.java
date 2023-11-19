@@ -15,7 +15,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
@@ -58,7 +58,7 @@ public class FluidTank extends AbstractWidget {
 
         // Only append Registry Name and Mod Name when the tank is not empty
         if (!this.getFluid().isEmpty()) {
-            TooltipHelper.appendRegistryName(tooltip, Registries.FLUID, this.getFluid().getFluid(), ChatFormatting.DARK_GRAY);
+            TooltipHelper.appendRegistryName(tooltip, BuiltInRegistries.FLUID, this.getFluid().getFluid(), ChatFormatting.DARK_GRAY);
             TooltipHelper.appendModNameFromFluid(tooltip, this.getFluid());
         }
 

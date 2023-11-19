@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -52,7 +51,7 @@ public final class TooltipHelper {
      * @param entry      Registry Entry
      * @param formatting Optional formatting
      */
-    public static <T> void appendRegistryName(List<Component> tooltip, ResourceKey<? extends Registry<T>> registry, T entry, ChatFormatting... formatting) {
+    public static <T> void appendRegistryName(List<Component> tooltip, Registry<T> registry, T entry, ChatFormatting... formatting) {
         if (Minecraft.getInstance().options.advancedItemTooltips) {
             ModHelper.registryNameOf(registry, entry)
                     .map(ResourceLocation::toString)

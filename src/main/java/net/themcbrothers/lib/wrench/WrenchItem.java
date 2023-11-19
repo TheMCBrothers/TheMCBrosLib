@@ -17,11 +17,9 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.themcbrothers.lib.LibraryTags;
 import net.themcbrothers.lib.util.CreativeTabHelper;
 
-import java.util.function.Function;
-
 public class WrenchItem extends Item implements Wrench {
-    public WrenchItem(Function<Properties, Properties> properties) {
-        super(properties.apply(new Properties().stacksTo(1)));
+    public WrenchItem(Properties properties) {
+        super(properties);
         CreativeTabHelper.addToCreativeTabs(() -> this, CreativeModeTabs.TOOLS_AND_UTILITIES.location());
     }
 

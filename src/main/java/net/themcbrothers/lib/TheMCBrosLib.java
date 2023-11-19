@@ -11,19 +11,15 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.themcbrothers.lib.config.Config;
-import net.themcbrothers.lib.registration.deferred.ItemDeferredRegister;
-import net.themcbrothers.lib.registration.object.ItemObject;
 import net.themcbrothers.lib.util.ComponentFormatter;
 import net.themcbrothers.lib.wrench.WrenchItem;
 import org.apache.logging.log4j.LogManager;
@@ -38,20 +34,13 @@ public class TheMCBrosLib {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final ComponentFormatter TEXT_UTILS = new ComponentFormatter(MOD_ID);
 
-    private static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(MOD_ID);
-    public static final ItemObject<WrenchItem> WRENCH = TheMCBrosLib.ITEMS.register("wrench",
-            () -> new WrenchItem(properties -> properties));
+    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
+    public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new, new Item.Properties().stacksTo(1));
 
-//    private static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES = DeferredRegister.create(ForgeRegistries.Keys.INGREDIENT_TYPES, MOD_ID);
-//    public static final RegistryObject<IngredientType<FluidContainerIngredient>> FLUID_CONTAINER = INGREDIENT_TYPES.register("fluid_container", () -> new IngredientType<>());
-
-    public TheMCBrosLib() {
+    public TheMCBrosLib(IEventBus modEventBus) {
         NeoForgeMod.enableMilkFluid();
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         TheMCBrosLib.ITEMS.register(modEventBus);
-
-        modEventBus.register(this);
 
         NeoForge.EVENT_BUS.addListener(this::onPlayerInteractWithEntity);
 
@@ -60,13 +49,6 @@ public class TheMCBrosLib {
 
     public static ResourceLocation rl(String s) {
         return new ResourceLocation(MOD_ID, s);
-    }
-
-    @SubscribeEvent
-    public void registerRecipeSerializers(RegisterEvent event) {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-//            CraftingHelper.register(FluidContainerIngredient.ID, FluidContainerIngredient.SERIALIZER);
-        }
     }
 
     private void onPlayerInteractWithEntity(final PlayerInteractEvent.EntityInteract event) {

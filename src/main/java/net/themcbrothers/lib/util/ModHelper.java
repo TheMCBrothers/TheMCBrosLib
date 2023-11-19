@@ -1,14 +1,12 @@
 package net.themcbrothers.lib.util;
 
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.registries.RegistryManager;
 import net.neoforged.neoforgespi.language.IModInfo;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,8 +25,8 @@ public final class ModHelper {
      * @param entry Registry Entry
      * @return Resource Location as Optional
      */
-    public static <T> Optional<ResourceLocation> registryNameOf(ResourceKey<? extends Registry<T>> registry, T entry) {
-        return Optional.ofNullable(RegistryManager.ACTIVE.getRegistry(registry).getKey(entry));
+    public static <T> Optional<ResourceLocation> registryNameOf(Registry<T> registry, T entry) {
+        return Optional.ofNullable(registry.getKey(entry));
     }
 
     /**
@@ -42,7 +40,7 @@ public final class ModHelper {
             return Optional.empty();
         }
 
-        return registryNameOf(Registries.FLUID, fluidStack.getFluid())
+        return registryNameOf(BuiltInRegistries.FLUID, fluidStack.getFluid())
                 .map(ResourceLocation::getNamespace);
     }
 
