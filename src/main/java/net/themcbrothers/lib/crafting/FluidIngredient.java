@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -93,6 +94,11 @@ public class FluidIngredient implements Predicate<FluidStack> {
     public static FluidIngredient fromValues(Stream<? extends Value> values) {
         FluidIngredient ingredient = new FluidIngredient(values);
         return ingredient.isEmpty() ? EMPTY : ingredient;
+    }
+
+    public JsonElement toJson(boolean allowEmpty) {
+        Codec<FluidIngredient> codec = allowEmpty ? CODEC : CODEC_NONEMPTY;
+        return Util.getOrThrow(codec.encodeStart(JsonOps.INSTANCE, this), IllegalStateException::new);
     }
 
     public static FluidIngredient of() {
