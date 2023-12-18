@@ -73,6 +73,14 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return false;
     }
 
+    public int getAmount(Fluid fluid) {
+        return Arrays.stream(getFluids())
+                .filter(fluidStack -> fluidStack.getFluid() == fluid)
+                .mapToInt(FluidStack::getAmount)
+                .findFirst()
+                .orElse(0);
+    }
+
     public boolean isEmpty() {
         return this.values.length == 0 || Arrays.stream(getFluids()).allMatch(FluidStack::isEmpty);
     }
@@ -89,6 +97,10 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
     public static FluidIngredient of() {
         return EMPTY;
+    }
+
+    public static FluidIngredient of(Fluid fluid, int amount) {
+        return of(new FluidStack(fluid, amount));
     }
 
     public static FluidIngredient of(FluidStack... stacks) {
@@ -178,7 +190,6 @@ public class FluidIngredient implements Predicate<FluidStack> {
         public Collection<FluidStack> getFluids() {
             List<FluidStack> list = Lists.newArrayList();
 
-            //noinspection deprecation
             for (Holder<Fluid> holder : BuiltInRegistries.FLUID.getTagOrEmpty(this.tag)) {
                 list.add(new FluidStack(holder.value(), this.amount));
             }
