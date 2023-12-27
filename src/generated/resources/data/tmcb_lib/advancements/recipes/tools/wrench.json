@@ -41,6 +41,5 @@
     "recipes": [
       "tmcb_lib:wrench"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

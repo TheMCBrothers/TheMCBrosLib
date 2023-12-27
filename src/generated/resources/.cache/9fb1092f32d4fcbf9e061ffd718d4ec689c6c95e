@@ -1,4 +1,4 @@
-// 1.20.2	2023-11-06T21:54:56.3781498	Recipes
-9c2a152a663ea8e4947d8b2b17a0452b0b8b913d data/minecraft/advancements/recipes/root.json
-cd19dff37450c7e40deaa5c8d64586b0ba8af56d data/tmcb_lib/advancements/recipes/tools/wrench.json
-0e0886cb09e58f034262b75406014d55ed7c0d4d data/tmcb_lib/recipes/wrench.json
+// 1.20.4	2023-12-27T17:51:37.3344486	Recipes
+d248c5232893b08a0d5830d0f2f575fd11fe9f3a data/minecraft/advancements/recipes/root.json
+e1a026a26632b46b4891c73a94ba65ac865158ef data/tmcb_lib/advancements/recipes/tools/wrench.json
+91372dc3782b96d66b7bdecc0be7335128b333e0 data/tmcb_lib/recipes/wrench.json
