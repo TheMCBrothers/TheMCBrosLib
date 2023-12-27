@@ -50,7 +50,7 @@ public class FluidDeferredRegister {
         fluidRegistryObject.updateStill(fluidRegister.register(name, () -> new BaseFlowingFluid.Source(fluidProperties)));
         fluidRegistryObject.updateFlowing(fluidRegister.register(flowingName, () -> new BaseFlowingFluid.Flowing(fluidProperties)));
         fluidRegistryObject.updateBlock(blockRegister.register(name, () -> new LiquidBlock(fluidRegistryObject::getStillFluid,
-                Block.Properties.copy(Blocks.WATER))));
+                Block.Properties.ofLegacyCopy(Blocks.WATER))));
         fluidRegistryObject.updateBucket(itemRegister.register(bucketName, () -> new BucketItem(fluidRegistryObject::getStillFluid,
                 bucketProps.apply(new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)))));
         allFluids.add(fluidRegistryObject);

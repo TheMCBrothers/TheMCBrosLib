@@ -1,12 +1,7 @@
 package net.themcbrothers.lib.energy;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.themcbrothers.lib.capability.CapabilityProvider;
-import org.jetbrains.annotations.Nullable;
 
 public class BasicEnergyContainerItem extends Item implements EnergyContainerItem {
     protected int capacity;
@@ -51,12 +46,6 @@ public class BasicEnergyContainerItem extends Item implements EnergyContainerIte
     public BasicEnergyContainerItem setMaxReceive(int maxReceive) {
         this.maxReceive = maxReceive;
         return this;
-    }
-
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new CapabilityProvider<>(new EnergyConversionStorage(this, stack), Capabilities.ENERGY, null);
     }
 
     /* IEnergyContainerItem */

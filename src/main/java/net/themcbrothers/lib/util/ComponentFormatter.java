@@ -96,6 +96,6 @@ public class ComponentFormatter {
      * @return True if it can be translated
      */
     public static boolean canTranslate(String key) {
-        return !I18nExtension.getPattern(key).equals(key);
+        return !I18nExtension.getPattern(key, () -> key).equals(key);
     }
 }

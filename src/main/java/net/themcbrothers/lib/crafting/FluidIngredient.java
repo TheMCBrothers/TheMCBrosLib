@@ -96,11 +96,6 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return ingredient.isEmpty() ? EMPTY : ingredient;
     }
 
-    public JsonElement toJson(boolean allowEmpty) {
-        Codec<FluidIngredient> codec = allowEmpty ? CODEC : CODEC_NONEMPTY;
-        return Util.getOrThrow(codec.encodeStart(JsonOps.INSTANCE, this), IllegalStateException::new);
-    }
-
     public static FluidIngredient of() {
         return EMPTY;
     }
@@ -124,6 +119,11 @@ public class FluidIngredient implements Predicate<FluidStack> {
     public static FluidIngredient fromJson(JsonElement element, boolean nonEmpty) {
         Codec<FluidIngredient> codec = nonEmpty ? CODEC : CODEC_NONEMPTY;
         return Util.getOrThrow(codec.parse(JsonOps.INSTANCE, element), IllegalStateException::new);
+    }
+
+    public JsonElement toJson(boolean allowEmpty) {
+        Codec<FluidIngredient> codec = allowEmpty ? CODEC : CODEC_NONEMPTY;
+        return Util.getOrThrow(codec.encodeStart(JsonOps.INSTANCE, this), IllegalStateException::new);
     }
 
     public static FluidIngredient fromNetwork(FriendlyByteBuf buffer) {
