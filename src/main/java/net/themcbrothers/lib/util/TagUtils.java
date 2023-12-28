@@ -26,10 +26,6 @@ public final class TagUtils {
         return ItemTags.create(new ResourceLocation(modID, name));
     }
 
-    public static TagKey<Item> modItemTag(ResourceLocation name) {
-        return ItemTags.create(name);
-    }
-
     // BLOCK TAGS
 
     public static TagKey<Block> forgeBlockTag(String name) {
@@ -40,10 +36,6 @@ public final class TagUtils {
         return BlockTags.create(new ResourceLocation(modID, name));
     }
 
-    public static TagKey<Block> modBlockTag(ResourceLocation id) {
-        return BlockTags.create(id);
-    }
-
     // FLUID TAGS
 
     public static TagKey<Fluid> forgeFluidTag(String id) {
@@ -52,9 +44,5 @@ public final class TagUtils {
 
     public static TagKey<Fluid> modFluidTag(String modID, String id) {
         return FluidTags.create(new ResourceLocation(modID, id));
-    }
-
-    public static TagKey<Fluid> modFluidTag(ResourceLocation id) {
-        return FluidTags.create(id);
     }
 }
