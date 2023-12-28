@@ -121,11 +121,6 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return Util.getOrThrow(codec.parse(JsonOps.INSTANCE, element), IllegalStateException::new);
     }
 
-    public JsonElement toJson(boolean allowEmpty) {
-        Codec<FluidIngredient> codec = allowEmpty ? CODEC : CODEC_NONEMPTY;
-        return Util.getOrThrow(codec.encodeStart(JsonOps.INSTANCE, this), IllegalStateException::new);
-    }
-
     public static FluidIngredient fromNetwork(FriendlyByteBuf buffer) {
         var size = buffer.readVarInt();
         return new FluidIngredient(Stream.generate(() -> new FluidValue(buffer.readFluidStack())).limit(size));
