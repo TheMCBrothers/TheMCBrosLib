@@ -23,7 +23,7 @@ public class BlockDeferredRegister extends DeferredRegister.Blocks {
     }
 
     public <T extends Block> DeferredBlock<T> register(String name, Supplier<T> block, Function<? super T, ? extends BlockItem> blockItemFactory) {
-        DeferredBlock<T> holder = this.register(name, block);
+        DeferredBlock<T> holder = super.register(name, block);
         this.itemRegister.register(name, () -> blockItemFactory.apply(holder.get()));
         return holder;
     }
