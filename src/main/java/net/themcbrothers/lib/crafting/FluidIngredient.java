@@ -16,6 +16,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.themcbrothers.lib.LibExtraCodecs;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -61,7 +63,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         if (fluidStack == null) {
             return false;
         } else if (this.isEmpty()) {
-            return false;
+            return fluidStack.isEmpty();
         } else {
             for (FluidStack stack : this.getFluids()) {
                 if (fluidStack.containsFluid(stack)) {
@@ -153,10 +155,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public record FluidValue(FluidStack fluid) implements Value {
-        static final Codec<FluidValue> CODEC = RecordCodecBuilder.create(
-                instance -> instance.group(FluidStack.CODEC.fieldOf("fluid").forGetter(value -> value.fluid))
-                        .apply(instance, FluidValue::new)
-        );
+        static final Codec<FluidValue> CODEC = LibExtraCodecs.FLUID_WITH_AMOUNT_CODEC.xmap(FluidValue::new, fluidValue -> fluidValue.fluid);
 
         @Override
         public boolean equals(Object o) {
@@ -175,7 +174,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         static final Codec<TagValue> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                                 TagKey.codec(Registries.FLUID).fieldOf("tag").forGetter(value -> value.tag),
-                                Codec.INT.fieldOf("amount").forGetter(value -> value.amount))
+                                ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "amount", FluidType.BUCKET_VOLUME).forGetter(value -> value.amount))
                         .apply(instance, TagValue::new)
         );
 
@@ -183,7 +182,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         public boolean equals(Object obj) {
             if (obj.getClass() != this.getClass()) return false;
             TagValue value = (TagValue) obj;
-            return value.tag.location().equals(this.tag.location());
+            return value.tag.location().equals(this.tag.location()) && value.amount == this.amount;
         }
 
         @Override
@@ -206,7 +205,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
                     } else if (value instanceof FluidValue fluidValue) {
                         return Either.left(fluidValue);
                     } else {
-                        throw new UnsupportedOperationException("This is neither an fluid value nor a tag value.");
+                        throw new UnsupportedOperationException("This is neither a fluid value nor a tag value.");
                     }
                 });
 
