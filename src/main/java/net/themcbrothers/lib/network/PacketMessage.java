@@ -1,10 +1,12 @@
 package net.themcbrothers.lib.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public interface PacketMessage {
-    void toBytes(FriendlyByteBuf buffer);
+public interface PacketMessage<CONTEXT extends IPayloadContext> extends CustomPacketPayload {
+    void handle(CONTEXT context);
 
-    void process(NetworkEvent.Context context);
+    default void handleMainThread(CONTEXT context) {
+        context.workHandler().execute(() -> handle(context));
+    }
 }
