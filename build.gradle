@@ -106,6 +106,7 @@ publishing {
     publications { PublicationContainer publicationContainer ->
         publicationContainer.register("maven", MavenPublication) { MavenPublication publication ->
             from components.java
+            artifactId = maven_name
         }
     }
     repositories {
