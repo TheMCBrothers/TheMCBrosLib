@@ -56,7 +56,7 @@ public class ComponentFormatter {
     }
 
     public MutableComponent fluidWithMax(FluidStack fluid, int max) {
-        Component fluidName = fluid.getDisplayName();
+        Component fluidName = fluid.getHoverName();
         String s1 = String.format(FORMAT, fluid.getAmount());
         String s2 = String.format(FORMAT, max);
         return translate("misc", fluid.getAmount() > 0 ? "fluidWithMaxName" : "empty", fluidName, s1, s2);
@@ -81,7 +81,7 @@ public class ComponentFormatter {
 
     public Component fluidName(FluidStack stack) {
         if (stack.isEmpty()) return translate("misc", "empty");
-        return stack.getDisplayName();
+        return stack.getHoverName();
     }
 
     public Component fluidName(Fluid fluid) {

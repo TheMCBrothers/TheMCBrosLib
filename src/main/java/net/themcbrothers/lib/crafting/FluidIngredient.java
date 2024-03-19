@@ -1,22 +1,22 @@
 package net.themcbrothers.lib.crafting;
 
 import com.google.common.collect.Lists;
-import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.themcbrothers.lib.LibExtraCodecs;
 
 import javax.annotation.Nullable;
@@ -32,6 +32,21 @@ import java.util.stream.Stream;
  */
 public class FluidIngredient implements Predicate<FluidStack> {
     public static final FluidIngredient EMPTY = new FluidIngredient(Stream.empty());
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, FluidIngredient> CONTENTS_STREAM_CODEC = new StreamCodec<>() {
+        private static final StreamCodec<RegistryFriendlyByteBuf, FluidIngredient> CODEC_STREAM_CODEC = NeoForgeStreamCodecs.lazy(() -> ByteBufCodecs.fromCodecWithRegistries(CODEC));
+
+        @Override
+        public void encode(RegistryFriendlyByteBuf buf, FluidIngredient ingredient) {
+            LibExtraCodecs.FLUID_STACK_LIST_STREAM_CODEC.encode(buf, Arrays.asList(ingredient.getFluids()));
+        }
+
+        @Override
+        public FluidIngredient decode(RegistryFriendlyByteBuf buf) {
+            int size = buf.readVarInt();
+            return fromValues(Stream.generate(() -> FluidStack.STREAM_CODEC.decode(buf)).limit(size).map(FluidValue::new));
+        }
+    };
 
     public static final Codec<FluidIngredient> CODEC = codec(true);
     public static final Codec<FluidIngredient> CODEC_NONEMPTY = codec(false);
@@ -117,20 +132,6 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return fromValues(Stream.of(new TagValue(fluidTag, amount)));
     }
 
-    public static FluidIngredient fromJson(JsonElement element, boolean nonEmpty) {
-        Codec<FluidIngredient> codec = nonEmpty ? CODEC : CODEC_NONEMPTY;
-        return Util.getOrThrow(codec.parse(JsonOps.INSTANCE, element), IllegalStateException::new);
-    }
-
-    public static FluidIngredient fromNetwork(FriendlyByteBuf buffer) {
-        var size = buffer.readVarInt();
-        return new FluidIngredient(Stream.generate(() -> new FluidValue(buffer.readFluidStack())).limit(size));
-    }
-
-    public void toNetwork(FriendlyByteBuf buffer) {
-        buffer.writeCollection(Arrays.asList(this.getFluids()), FriendlyByteBuf::writeFluidStack);
-    }
-
     private static Codec<FluidIngredient> codec(boolean allowEmpty) {
         Codec<Value[]> codec = Codec.list(Value.CODEC)
                 .comapFlatMap(
@@ -155,7 +156,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public record FluidValue(FluidStack fluid) implements Value {
-        static final Codec<FluidValue> CODEC = LibExtraCodecs.FLUID_WITH_AMOUNT_CODEC.xmap(FluidValue::new, fluidValue -> fluidValue.fluid);
+        static final Codec<FluidValue> CODEC = FluidStack.CODEC.xmap(FluidValue::new, fluidValue -> fluidValue.fluid);
 
         @Override
         public boolean equals(Object o) {

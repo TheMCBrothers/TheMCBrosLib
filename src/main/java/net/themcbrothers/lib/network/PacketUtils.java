@@ -1,31 +1,7 @@
-// MIT License
-//
-// Copyright (c) 2017-2023 Aidan C. Brady
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
 package net.themcbrothers.lib.network;
 
-import com.google.common.collect.Maps;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -39,48 +15,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.IntFunction;
 
 public class PacketUtils {
     private PacketUtils() {
-    }
-
-    public static <KEY, V1, V2> void writeMultipleMaps(FriendlyByteBuf buffer, Map<KEY, V1> map1, Map<KEY, V2> map2, FriendlyByteBuf.Writer<KEY> keyWriter,
-                                                       FriendlyByteBuf.Writer<V1> v1Writer, FriendlyByteBuf.Writer<V2> v2Writer) {
-        if (map1.size() != map2.size()) {
-            throw new IllegalArgumentException("Expected map1 and map2 to have the same size");
-        }
-        buffer.writeVarInt(map1.size());
-        for (Map.Entry<KEY, V1> entry : map1.entrySet()) {
-            KEY key = entry.getKey();
-            keyWriter.accept(buffer, key);
-            v1Writer.accept(buffer, entry.getValue());
-            V2 v2 = map2.get(key);
-            if (v2 == null) {
-                throw new IllegalArgumentException("Expected maps to have the same keys but map2 was missing key " + key);
-            }
-            v2Writer.accept(buffer, v2);
-        }
-    }
-
-    public static <KEY, V1, V2> Pair<Map<KEY, V1>, Map<KEY, V2>> readMultipleMaps(FriendlyByteBuf buffer, FriendlyByteBuf.Reader<KEY> keyReader, FriendlyByteBuf.Reader<V1> v1Reader, FriendlyByteBuf.Reader<V2> v2Reader) {
-        return readMultipleMaps(buffer, Maps::newHashMapWithExpectedSize, Maps::newHashMapWithExpectedSize, keyReader, v1Reader, v2Reader);
-    }
-
-    public static <KEY, V1, V2, M1 extends Map<KEY, V1>, M2 extends Map<KEY, V2>> Pair<M1, M2> readMultipleMaps(FriendlyByteBuf buffer, IntFunction<M1> map1Factory, IntFunction<M2> map2Factory,
-                                                                                                                FriendlyByteBuf.Reader<KEY> keyReader, FriendlyByteBuf.Reader<V1> v1Reader, FriendlyByteBuf.Reader<V2> v2Reader) {
-        int size = buffer.readVarInt();
-        M1 map1 = map1Factory.apply(size);
-        M2 map2 = map2Factory.apply(size);
-        for (int element = 0; element < size; element++) {
-            KEY key = keyReader.apply(buffer);
-            map1.put(key, v1Reader.apply(buffer));
-            map2.put(key, v2Reader.apply(buffer));
-        }
-        return Pair.of(map1, map2);
     }
 
     public static Optional<ServerPlayer> asServerPlayer(IPayloadContext context) {

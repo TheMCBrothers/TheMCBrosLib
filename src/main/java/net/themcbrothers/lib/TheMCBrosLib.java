@@ -1,7 +1,10 @@
 package net.themcbrothers.lib;
 
 
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -43,10 +46,17 @@ public class TheMCBrosLib {
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new, new Item.Properties().stacksTo(1));
 
+    // Data Components
+    static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MOD_ID);
+
     public TheMCBrosLib(IEventBus modEventBus) {
         NeoForgeMod.enableMilkFluid();
 
-        TheMCBrosLib.ITEMS.register(modEventBus);
+        // Components
+        LibDataComponents.init();
+        DATA_COMPONENT_TYPES.register(modEventBus);
+
+        ITEMS.register(modEventBus);
 
         NeoForge.EVENT_BUS.addListener(this::onPlayerInteractWithEntity);
 
@@ -89,7 +99,7 @@ public class TheMCBrosLib {
 
                     if (!stack.isEmpty()) {
                         if (target.hasCustomName()) {
-                            stack.setHoverName(target.getCustomName());
+                            stack.set(DataComponents.CUSTOM_NAME, target.getCustomName());
                         }
 
                         ItemEntity itemEntity = target.spawnAtLocation(stack);

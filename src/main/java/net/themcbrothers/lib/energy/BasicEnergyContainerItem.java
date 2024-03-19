@@ -2,6 +2,7 @@ package net.themcbrothers.lib.energy;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.themcbrothers.lib.LibDataComponents;
 
 public class BasicEnergyContainerItem extends Item implements EnergyContainerItem {
     protected int capacity;
@@ -51,12 +52,12 @@ public class BasicEnergyContainerItem extends Item implements EnergyContainerIte
     /* IEnergyContainerItem */
     @Override
     public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
-        int stored = Math.min(container.getOrCreateTag().getInt(TAG_ENERGY), getMaxEnergyStored(container));
+        int stored = Math.min(getEnergyStored(container), getMaxEnergyStored(container));
         int energyReceived = Math.min(this.capacity - stored, Math.min(this.maxReceive, maxReceive));
 
         if (!simulate) {
             stored += energyReceived;
-            container.getOrCreateTag().putInt(TAG_ENERGY, stored);
+            container.set(LibDataComponents.ENERGY.get(), stored);
         }
 
         return energyReceived;
@@ -64,16 +65,16 @@ public class BasicEnergyContainerItem extends Item implements EnergyContainerIte
 
     @Override
     public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
-        if (container.getTag() == null || !container.getTag().contains(TAG_ENERGY)) {
+        if (!container.has(LibDataComponents.ENERGY.get())) {
             return 0;
         }
 
-        int stored = Math.min(container.getTag().getInt(TAG_ENERGY), getMaxEnergyStored(container));
+        int stored = Math.min(getEnergyStored(container), getMaxEnergyStored(container));
         int energyExtracted = Math.min(stored, Math.min(this.maxExtract, maxExtract));
 
         if (!simulate) {
             stored -= energyExtracted;
-            container.getTag().putInt(TAG_ENERGY, stored);
+            container.set(LibDataComponents.ENERGY.get(), stored);
         }
 
         return energyExtracted;
@@ -81,11 +82,7 @@ public class BasicEnergyContainerItem extends Item implements EnergyContainerIte
 
     @Override
     public int getEnergyStored(ItemStack container) {
-        if (container.getTag() == null || !container.getTag().contains(TAG_ENERGY)) {
-            return 0;
-        }
-
-        return Math.min(container.getTag().getInt(TAG_ENERGY), getMaxEnergyStored(container));
+        return container.getOrDefault(LibDataComponents.ENERGY.get(), 0);
     }
 
     @Override
