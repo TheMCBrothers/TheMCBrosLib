@@ -119,8 +119,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = System.getenv("NEXUS_UNAME")
-                password = System.getenv("NEXUS_PWD")
+                username = System.getenv("PUBLISH_USER")
+                password = System.getenv("PUBLISH_PASSWORD")
             }
 
             if (version.endsWith('-SNAPSHOT')) {
