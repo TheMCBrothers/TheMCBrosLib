@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/iron"
+            "items": "#forge:ingots/iron"
           }
         ]
       },
@@ -21,9 +21,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "tmcb_lib:wrench"
-            ]
+            "items": "tmcb_lib:wrench"
           }
         ]
       },
