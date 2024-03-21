@@ -52,13 +52,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     mavenLocal()
-    maven {
-        name 'Maven for PR #715' // https://github.com/neoforged/NeoForge/pull/715
-        url 'https://prmaven.neoforged.net/NeoForge/pr715'
-        content {
-            includeModule('net.neoforged', 'neoforge')
-        }
-    }
+    maven { url 'https://nexus.themcbrothers.net/repository/maven-mod-dependencies/' }
 }
 
 dependencies {
