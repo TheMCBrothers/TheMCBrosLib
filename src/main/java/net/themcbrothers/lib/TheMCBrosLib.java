@@ -16,7 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -49,7 +49,7 @@ public class TheMCBrosLib {
     // Data Components
     static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MOD_ID);
 
-    public TheMCBrosLib(IEventBus modEventBus) {
+    public TheMCBrosLib(IEventBus modEventBus, ModContainer modContainer) {
         NeoForgeMod.enableMilkFluid();
 
         // Components
@@ -60,7 +60,7 @@ public class TheMCBrosLib {
 
         NeoForge.EVENT_BUS.addListener(this::onPlayerInteractWithEntity);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
 
         modEventBus.addListener(EventPriority.HIGH, RegisterCapabilitiesEvent.class, event -> {
             for (Item item : BuiltInRegistries.ITEM) {

@@ -162,7 +162,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            return this.fluid.isFluidStackIdentical(((FluidValue) o).fluid);
+            return FluidStack.matches(this.fluid, ((FluidValue) o).fluid);
         }
 
         @Override
