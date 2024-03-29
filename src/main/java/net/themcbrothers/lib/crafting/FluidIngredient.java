@@ -81,7 +81,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
             return fluidStack.isEmpty();
         } else {
             for (FluidStack stack : this.getFluids()) {
-                if (fluidStack.containsFluid(stack)) {
+                if (FluidStack.isSameFluidSameComponents(fluidStack, stack) && fluidStack.getAmount() >= stack.getAmount()) {
                     return true;
                 }
             }
@@ -140,7 +140,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
                                 : DataResult.success(values.toArray(new Value[0])),
                         List::of
                 );
-        return ExtraCodecs.either(codec, Value.CODEC)
+        return Codec.either(codec, Value.CODEC)
                 .flatComapMap(
                         either -> either.map(FluidIngredient::new, values -> new FluidIngredient(new Value[]{values})),
                         ingredient -> {
@@ -175,7 +175,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         static final Codec<TagValue> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                                 TagKey.codec(Registries.FLUID).fieldOf("tag").forGetter(value -> value.tag),
-                                ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "amount", FluidType.BUCKET_VOLUME).forGetter(value -> value.amount))
+                                ExtraCodecs.POSITIVE_INT.optionalFieldOf("amount", FluidType.BUCKET_VOLUME).forGetter(value -> value.amount))
                         .apply(instance, TagValue::new)
         );
 
@@ -199,7 +199,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public interface Value {
-        Codec<Value> CODEC = ExtraCodecs.xor(FluidValue.CODEC, TagValue.CODEC)
+        Codec<Value> CODEC = Codec.xor(FluidValue.CODEC, TagValue.CODEC)
                 .xmap(either -> either.map(left -> left, right -> right), value -> {
                     if (value instanceof TagValue tagValue) {
                         return Either.right(tagValue);
