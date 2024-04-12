@@ -22,8 +22,4 @@ eclipse
 run
 runs
 run-data
-repo
-
-secrets.properties
-secret.properties
-.env
+/src/generated/**/.cache/
