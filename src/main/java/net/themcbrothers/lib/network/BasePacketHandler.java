@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.themcbrothers.lib.util.Version;
 
 public abstract class BasePacketHandler {
-    protected BasePacketHandler(IEventBus modEventBus, String modId, Version version, HandlerThread handlerThread) {
+    protected BasePacketHandler(IEventBus modEventBus, String modId, Version version) {
         modEventBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
             PayloadRegistrar registrarMainThread = event.registrar(modId).versioned(version.toString());
             PayloadRegistrar registrarNetworkThread = registrarMainThread.executesOn(HandlerThread.NETWORK);
