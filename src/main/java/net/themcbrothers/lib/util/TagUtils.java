@@ -1,9 +1,9 @@
 package net.themcbrothers.lib.util;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -16,33 +16,19 @@ public final class TagUtils {
     private TagUtils() {
     }
 
-    // ITEM TAGS
-
-    public static TagKey<Item> forgeItemTag(String name) {
-        return ItemTags.create(new ResourceLocation("forge", name));
+    public static TagKey<Item> commonItemTag(String name) {
+        return commonTag(Registries.ITEM, name);
     }
 
-    public static TagKey<Item> modItemTag(String modID, String name) {
-        return ItemTags.create(new ResourceLocation(modID, name));
+    public static TagKey<Block> commonBlockTag(String name) {
+        return commonTag(Registries.BLOCK, name);
     }
 
-    // BLOCK TAGS
-
-    public static TagKey<Block> forgeBlockTag(String name) {
-        return BlockTags.create(new ResourceLocation("forge", name));
+    public static TagKey<Fluid> commonFluidTag(String name) {
+        return commonTag(Registries.FLUID, name);
     }
 
-    public static TagKey<Block> modBlockTag(String modID, String name) {
-        return BlockTags.create(new ResourceLocation(modID, name));
-    }
-
-    // FLUID TAGS
-
-    public static TagKey<Fluid> forgeFluidTag(String id) {
-        return FluidTags.create(new ResourceLocation("forge", id));
-    }
-
-    public static TagKey<Fluid> modFluidTag(String modID, String id) {
-        return FluidTags.create(new ResourceLocation(modID, id));
+    public static <T> TagKey<T> commonTag(ResourceKey<? extends Registry<T>> registry, String name) {
+        return TagKey.create(registry, new ResourceLocation("c", name));
     }
 }

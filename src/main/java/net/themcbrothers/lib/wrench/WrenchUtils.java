@@ -14,9 +14,8 @@ import net.themcbrothers.lib.util.TagUtils;
 import javax.annotation.Nullable;
 
 public class WrenchUtils {
-    private static final TagKey<Item> TAG_TOOLS_WRENCH = TagUtils.forgeItemTag("tools/wrench");
-    private static final TagKey<Item> TAG_WRENCHES = TagUtils.forgeItemTag("wrenches");
-    private static final TagKey<Item> TAG_WRENCH = TagUtils.forgeItemTag("wrench");
+    private static final TagKey<Item> TAG_TOOLS_WRENCH = TagUtils.commonItemTag("tools/wrenches");
+    private static final TagKey<Item> TAG_TOOLS_WRENCHES = TagUtils.commonItemTag("tools/wrench");
 
     @Nullable
     public static Wrench getWrench(ItemStack stack) {
@@ -34,6 +33,6 @@ public class WrenchUtils {
     }
 
     public static boolean hasWrenchTag(ItemStack stack) {
-        return stack.is(TAG_TOOLS_WRENCH) || stack.is(TAG_WRENCHES) || stack.is(TAG_WRENCH);
+        return stack.is(TAG_TOOLS_WRENCH) || stack.is(TAG_TOOLS_WRENCHES);
     }
 }
