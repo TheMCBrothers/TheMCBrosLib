@@ -4,14 +4,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.neoforged.neoforge.common.Tags;
 import net.themcbrothers.lib.TheMCBrosLib;
 
 import java.util.concurrent.CompletableFuture;
 
-public class LibraryRecipeProvider extends VanillaRecipeProvider {
+public class LibraryRecipeProvider extends RecipeProvider {
     public LibraryRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider);
     }

@@ -2,7 +2,9 @@ package net.themcbrothers.lib.datagen;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.themcbrothers.lib.LibraryTags;
@@ -20,6 +22,17 @@ public class LibraryTagsProvider {
         @Override
         protected void addTags(HolderLookup.Provider lookupProvider) {
             this.tag(LibraryTags.Blocks.WRENCHABLE).addTag(BlockTags.RAILS);
+        }
+    }
+
+    public static class Items extends ItemTagsProvider {
+        public Items(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTags) {
+            super(output, lookupProvider, blockTags);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider lookupProvider) {
+            this.tag(LibraryTags.Items.TOOLS_WRENCHES).add(TheMCBrosLib.WRENCH.value());
         }
     }
 }

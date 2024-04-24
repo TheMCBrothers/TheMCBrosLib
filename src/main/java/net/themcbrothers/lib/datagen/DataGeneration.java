@@ -20,7 +20,9 @@ public class DataGeneration {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        generator.addProvider(event.includeServer(), new LibraryTagsProvider.Blocks(packOutput, lookupProvider, existingFileHelper));
+        LibraryTagsProvider.Blocks blockTagsProvider = new LibraryTagsProvider.Blocks(packOutput, lookupProvider, existingFileHelper);
+        generator.addProvider(event.includeServer(), blockTagsProvider);
+        generator.addProvider(event.includeServer(), new LibraryTagsProvider.Items(packOutput, lookupProvider, blockTagsProvider.contentsGetter()));
         generator.addProvider(event.includeServer(), new LibraryRecipeProvider(packOutput, lookupProvider));
     }
 }
