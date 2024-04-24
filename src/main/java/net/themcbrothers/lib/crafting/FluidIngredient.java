@@ -1,22 +1,22 @@
 package net.themcbrothers.lib.crafting;
 
 import com.google.common.collect.Lists;
-import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.themcbrothers.lib.LibExtraCodecs;
 
 import javax.annotation.Nullable;
@@ -32,6 +32,21 @@ import java.util.stream.Stream;
  */
 public class FluidIngredient implements Predicate<FluidStack> {
     public static final FluidIngredient EMPTY = new FluidIngredient(Stream.empty());
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, FluidIngredient> CONTENTS_STREAM_CODEC = new StreamCodec<>() {
+        private static final StreamCodec<RegistryFriendlyByteBuf, FluidIngredient> CODEC_STREAM_CODEC = NeoForgeStreamCodecs.lazy(() -> ByteBufCodecs.fromCodecWithRegistries(CODEC));
+
+        @Override
+        public void encode(RegistryFriendlyByteBuf buf, FluidIngredient ingredient) {
+            LibExtraCodecs.FLUID_STACK_LIST_STREAM_CODEC.encode(buf, Arrays.asList(ingredient.getFluids()));
+        }
+
+        @Override
+        public FluidIngredient decode(RegistryFriendlyByteBuf buf) {
+            int size = buf.readVarInt();
+            return fromValues(Stream.generate(() -> FluidStack.STREAM_CODEC.decode(buf)).limit(size).map(FluidValue::new));
+        }
+    };
 
     public static final Codec<FluidIngredient> CODEC = codec(true);
     public static final Codec<FluidIngredient> CODEC_NONEMPTY = codec(false);
@@ -66,7 +81,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
             return fluidStack.isEmpty();
         } else {
             for (FluidStack stack : this.getFluids()) {
-                if (fluidStack.containsFluid(stack)) {
+                if (FluidStack.isSameFluidSameComponents(fluidStack, stack) && fluidStack.getAmount() >= stack.getAmount()) {
                     return true;
                 }
             }
@@ -117,20 +132,6 @@ public class FluidIngredient implements Predicate<FluidStack> {
         return fromValues(Stream.of(new TagValue(fluidTag, amount)));
     }
 
-    public static FluidIngredient fromJson(JsonElement element, boolean nonEmpty) {
-        Codec<FluidIngredient> codec = nonEmpty ? CODEC : CODEC_NONEMPTY;
-        return Util.getOrThrow(codec.parse(JsonOps.INSTANCE, element), IllegalStateException::new);
-    }
-
-    public static FluidIngredient fromNetwork(FriendlyByteBuf buffer) {
-        var size = buffer.readVarInt();
-        return new FluidIngredient(Stream.generate(() -> new FluidValue(buffer.readFluidStack())).limit(size));
-    }
-
-    public void toNetwork(FriendlyByteBuf buffer) {
-        buffer.writeCollection(Arrays.asList(this.getFluids()), FriendlyByteBuf::writeFluidStack);
-    }
-
     private static Codec<FluidIngredient> codec(boolean allowEmpty) {
         Codec<Value[]> codec = Codec.list(Value.CODEC)
                 .comapFlatMap(
@@ -139,7 +140,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
                                 : DataResult.success(values.toArray(new Value[0])),
                         List::of
                 );
-        return ExtraCodecs.either(codec, Value.CODEC)
+        return Codec.either(codec, Value.CODEC)
                 .flatComapMap(
                         either -> either.map(FluidIngredient::new, values -> new FluidIngredient(new Value[]{values})),
                         ingredient -> {
@@ -155,13 +156,13 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public record FluidValue(FluidStack fluid) implements Value {
-        static final Codec<FluidValue> CODEC = LibExtraCodecs.FLUID_WITH_AMOUNT_CODEC.xmap(FluidValue::new, fluidValue -> fluidValue.fluid);
+        static final Codec<FluidValue> CODEC = FluidStack.CODEC.xmap(FluidValue::new, fluidValue -> fluidValue.fluid);
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            return this.fluid.isFluidStackIdentical(((FluidValue) o).fluid);
+            return FluidStack.matches(this.fluid, ((FluidValue) o).fluid);
         }
 
         @Override
@@ -174,7 +175,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         static final Codec<TagValue> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                                 TagKey.codec(Registries.FLUID).fieldOf("tag").forGetter(value -> value.tag),
-                                ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "amount", FluidType.BUCKET_VOLUME).forGetter(value -> value.amount))
+                                ExtraCodecs.POSITIVE_INT.optionalFieldOf("amount", FluidType.BUCKET_VOLUME).forGetter(value -> value.amount))
                         .apply(instance, TagValue::new)
         );
 
@@ -198,7 +199,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public interface Value {
-        Codec<Value> CODEC = ExtraCodecs.xor(FluidValue.CODEC, TagValue.CODEC)
+        Codec<Value> CODEC = Codec.xor(FluidValue.CODEC, TagValue.CODEC)
                 .xmap(either -> either.map(left -> left, right -> right), value -> {
                     if (value instanceof TagValue tagValue) {
                         return Either.right(tagValue);

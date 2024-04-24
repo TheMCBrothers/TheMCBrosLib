@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.crafting;
 
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -12,8 +12,8 @@ import net.minecraft.world.item.crafting.Recipe;
  */
 public interface CommonRecipe<C extends Container> extends Recipe<C> {
     @Override
-    default ItemStack assemble(C container, RegistryAccess registryAccess) {
-        return getResultItem(registryAccess).copy();
+    default ItemStack assemble(C container, HolderLookup.Provider provider) {
+        return getResultItem(provider).copy();
     }
 
     /**

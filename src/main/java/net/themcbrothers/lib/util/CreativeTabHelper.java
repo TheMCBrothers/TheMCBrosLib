@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.CreativeModeTabRegistry;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.themcbrothers.lib.TheMCBrosLib;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 /**
  * Helps with the new system for {@link CreativeModeTab}s
  */
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = TheMCBrosLib.MOD_ID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = TheMCBrosLib.MOD_ID)
 public final class CreativeTabHelper {
     private CreativeTabHelper() {
     }

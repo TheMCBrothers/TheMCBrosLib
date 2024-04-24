@@ -6,8 +6,6 @@ import net.minecraft.world.item.ItemStack;
  * Implement this interface on Item classes that support external manipulation of their internal energy storages.
  */
 public interface EnergyContainerItem {
-    String TAG_ENERGY = "Energy";
-
     /**
      * Adds energy to a container item. Returns the quantity of energy that was accepted.
      * This should always return 0 if the item cannot be externally charged.
