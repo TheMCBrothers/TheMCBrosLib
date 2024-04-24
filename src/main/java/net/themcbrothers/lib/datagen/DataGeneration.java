@@ -4,14 +4,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.themcbrothers.lib.TheMCBrosLib;
 
 import java.util.concurrent.CompletableFuture;
 
-@Mod.EventBusSubscriber(modid = TheMCBrosLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TheMCBrosLib.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class DataGeneration {
     @SubscribeEvent
     static void dataGen(final GatherDataEvent event) {
