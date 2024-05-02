@@ -34,9 +34,6 @@ import net.themcbrothers.lib.wrench.WrenchItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 @Mod(TheMCBrosLib.MOD_ID)
 public class TheMCBrosLib {
     public static final String MOD_ID = "tmcb_lib";
@@ -95,9 +92,9 @@ public class TheMCBrosLib {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
 
-                    ItemStack stack = new ItemStack(getDropItemFromMinecart(minecart));
+                    ItemStack stack = minecart.getPickResult();
 
-                    if (!stack.isEmpty()) {
+                    if (stack != null && !stack.isEmpty()) {
                         if (target.hasCustomName()) {
                             stack.set(DataComponents.CUSTOM_NAME, target.getCustomName());
                         }
@@ -117,19 +114,6 @@ public class TheMCBrosLib {
                     target.kill();
                 }
             }
-        }
-    }
-
-    private Item getDropItemFromMinecart(final AbstractMinecart minecart) {
-        Class<? extends AbstractMinecart> clazz = minecart.getClass();
-
-        try {
-            Method getDropItem = clazz.getDeclaredMethod("getDropItem");
-            getDropItem.setAccessible(true);
-            Object o = getDropItem.invoke(minecart);
-            return (Item) o;
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException ex) {
-            throw new RuntimeException(ex);
         }
     }
 }
