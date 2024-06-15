@@ -29,6 +29,6 @@ public final class TagUtils {
     }
 
     public static <T> TagKey<T> commonTag(ResourceKey<? extends Registry<T>> registry, String name) {
-        return TagKey.create(registry, new ResourceLocation("c", name));
+        return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath("c", name));
     }
 }

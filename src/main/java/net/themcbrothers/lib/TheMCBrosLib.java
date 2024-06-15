@@ -69,7 +69,7 @@ public class TheMCBrosLib {
     }
 
     public static ResourceLocation rl(String s) {
-        return new ResourceLocation(MOD_ID, s);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, s);
     }
 
     private void onPlayerInteractWithEntity(final PlayerInteractEvent.EntityInteract event) {

@@ -144,23 +144,19 @@ public class FluidTank extends AbstractWidget {
         RenderSystem.setShaderColor(red, green, blue, alpha);
     }
 
-    private static void drawTextureWithMasking(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
-        double uMin = textureSprite.getU0();
-        double uMax = textureSprite.getU1();
-        double vMin = textureSprite.getV0();
-        double vMax = textureSprite.getV1();
-        uMax = uMax - (maskRight / 16.0 * (uMax - uMin));
-        vMax = vMax - (maskTop / 16.0 * (vMax - vMin));
+    private static void drawTextureWithMasking(float xCoord, float yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, float zLevel) {
+        float uMin = textureSprite.getU0();
+        float uMax = textureSprite.getU1();
+        float vMin = textureSprite.getV0();
+        float vMax = textureSprite.getV1();
+        uMax = uMax - (maskRight / 16F * (uMax - uMin));
+        vMax = vMax - (maskTop / 16F * (vMax - vMin));
 
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tesselator.getBuilder();
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferBuilder.vertex(xCoord, yCoord + 16, zLevel).uv((float) uMin, (float) vMax).endVertex();
-        bufferBuilder.vertex(xCoord + 16 - maskRight, yCoord + 16, zLevel).uv((float) uMax, (float) vMax).endVertex();
-        bufferBuilder.vertex(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).uv((float) uMax, (float) vMin).endVertex();
-        bufferBuilder.vertex(xCoord, yCoord + maskTop, zLevel).uv((float) uMin, (float) vMin).endVertex();
-
-        tesselator.end();
+        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferBuilder.addVertex(xCoord, yCoord + 16, zLevel).setUv(uMin, vMax);
+        bufferBuilder.addVertex(xCoord + 16 - maskRight, yCoord + 16, zLevel).setUv(uMax, vMax);
+        bufferBuilder.addVertex(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).setUv(uMax, vMin);
+        bufferBuilder.addVertex(xCoord, yCoord + maskTop, zLevel).setUv(uMin, vMin);
     }
 
     @Override

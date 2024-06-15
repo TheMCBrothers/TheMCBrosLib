@@ -51,7 +51,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
      */
     public <T extends BlockEntity> DeferredBlockEntityType<T> register(String name, BlockEntityType.BlockEntitySupplier<? extends T> factory, Supplier<? extends Block> block) {
         this.register(name, () -> BlockEntityType.Builder.<T>of(factory, block.get()).build(getType(name)));
-        return DeferredBlockEntityType.createBlockEntityType(new ResourceLocation(getNamespace(), name));
+        return DeferredBlockEntityType.createBlockEntityType(ResourceLocation.fromNamespaceAndPath(getNamespace(), name));
     }
 
     /**
@@ -69,7 +69,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
             return new BlockEntityType<>(factory, blocks.build(), getType(name));
         });
 
-        return DeferredBlockEntityType.createBlockEntityType(new ResourceLocation(getNamespace(), name));
+        return DeferredBlockEntityType.createBlockEntityType(ResourceLocation.fromNamespaceAndPath(getNamespace(), name));
     }
 
     @Deprecated

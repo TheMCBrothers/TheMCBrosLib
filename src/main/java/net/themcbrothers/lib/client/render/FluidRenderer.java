@@ -203,48 +203,42 @@ public class FluidRenderer {
             }
         }
         // add quads
-        int light1 = brightness & 0xFFFF;
-        int light2 = brightness >> 0x10 & 0xFFFF;
-        int a = color >> 24 & 0xFF;
-        int r = color >> 16 & 0xFF;
-        int g = color >> 8 & 0xFF;
-        int b = color & 0xFF;
         switch (face) {
             case DOWN -> {
-                renderer.vertex(matrix, x1, y1, z2).color(r, g, b, a).uv(u1, v1).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y1, z1).color(r, g, b, a).uv(u2, v2).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y1, z1).color(r, g, b, a).uv(u3, v3).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y1, z2).color(r, g, b, a).uv(u4, v4).uv2(light1, light2).endVertex();
+                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u1, v1).setLight(brightness);
+                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u2, v2).setLight(brightness);
+                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u3, v3).setLight(brightness);
+                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u4, v4).setLight(brightness);
             }
             case UP -> {
-                renderer.vertex(matrix, x1, y2, z1).color(r, g, b, a).uv(u1, v1).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y2, z2).color(r, g, b, a).uv(u2, v2).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y2, z2).color(r, g, b, a).uv(u3, v3).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y2, z1).color(r, g, b, a).uv(u4, v4).uv2(light1, light2).endVertex();
+                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u1, v1).setLight(brightness);
+                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u2, v2).setLight(brightness);
+                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u3, v3).setLight(brightness);
+                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u4, v4).setLight(brightness);
             }
             case NORTH -> {
-                renderer.vertex(matrix, x1, y1, z1).color(r, g, b, a).uv(u1, v1).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y2, z1).color(r, g, b, a).uv(u2, v2).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y2, z1).color(r, g, b, a).uv(u3, v3).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y1, z1).color(r, g, b, a).uv(u4, v4).uv2(light1, light2).endVertex();
+                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u1, v1).setLight(brightness);
+                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u2, v2).setLight(brightness);
+                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u3, v3).setLight(brightness);
+                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u4, v4).setLight(brightness);
             }
             case SOUTH -> {
-                renderer.vertex(matrix, x2, y1, z2).color(r, g, b, a).uv(u1, v1).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y2, z2).color(r, g, b, a).uv(u2, v2).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y2, z2).color(r, g, b, a).uv(u3, v3).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y1, z2).color(r, g, b, a).uv(u4, v4).uv2(light1, light2).endVertex();
+                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u1, v1).setLight(brightness);
+                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u2, v2).setLight(brightness);
+                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u3, v3).setLight(brightness);
+                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u4, v4).setLight(brightness);
             }
             case WEST -> {
-                renderer.vertex(matrix, x1, y1, z2).color(r, g, b, a).uv(u1, v1).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y2, z2).color(r, g, b, a).uv(u2, v2).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y2, z1).color(r, g, b, a).uv(u3, v3).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x1, y1, z1).color(r, g, b, a).uv(u4, v4).uv2(light1, light2).endVertex();
+                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u1, v1).setLight(brightness);
+                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u2, v2).setLight(brightness);
+                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u3, v3).setLight(brightness);
+                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u4, v4).setLight(brightness);
             }
             case EAST -> {
-                renderer.vertex(matrix, x2, y1, z1).color(r, g, b, a).uv(u1, v1).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y2, z1).color(r, g, b, a).uv(u2, v2).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y2, z2).color(r, g, b, a).uv(u3, v3).uv2(light1, light2).endVertex();
-                renderer.vertex(matrix, x2, y1, z2).color(r, g, b, a).uv(u4, v4).uv2(light1, light2).endVertex();
+                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u1, v1).setLight(brightness);
+                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u2, v2).setLight(brightness);
+                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u3, v3).setLight(brightness);
+                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u4, v4).setLight(brightness);
             }
         }
     }
