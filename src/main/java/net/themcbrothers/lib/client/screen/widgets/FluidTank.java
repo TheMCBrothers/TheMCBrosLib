@@ -1,18 +1,13 @@
 package net.themcbrothers.lib.client.screen.widgets;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,6 +17,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.themcbrothers.lib.client.render.LibRenderTypes;
 import net.themcbrothers.lib.util.TooltipHelper;
 
 import javax.annotation.Nullable;
@@ -47,8 +43,8 @@ public class FluidTank extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics poseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        this.drawFluid(this.getX(), this.getY(), this.getFluid());
+    public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        this.drawFluid(guiGraphics, this.getX(), this.getY(), this.getFluid());
     }
 
     public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -75,7 +71,7 @@ public class FluidTank extends AbstractWidget {
 
     // Rendering methods
 
-    protected void drawFluid(final int xPosition, final int yPosition, @Nullable FluidStack fluidStack) {
+    protected void drawFluid(GuiGraphics guiGraphics, final int xPosition, final int yPosition, @Nullable FluidStack fluidStack) {
         if (fluidStack == null || fluidStack.isEmpty()) {
             return;
         }
@@ -92,13 +88,11 @@ public class FluidTank extends AbstractWidget {
             scaledAmount = height;
         }
 
-        drawTiledSprite(xPosition, yPosition, width, height, fluidColor, scaledAmount, fluidStillSprite);
+        drawTiledSprite(guiGraphics, xPosition, yPosition, width, height, fluidColor, scaledAmount, fluidStillSprite);
     }
 
-    protected void drawTiledSprite(final int xPosition, final int yPosition, final int tiledWidth, final int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        setGLColorFromInt(color);
-        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+    protected void drawTiledSprite(GuiGraphics guiGraphics, final int xPosition, final int yPosition, final int tiledWidth, final int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
+        final VertexConsumer buffer = guiGraphics.bufferSource().getBuffer(LibRenderTypes.FLUID_GUI);
 
         final int xTileCount = tiledWidth / TEX_WIDTH;
         final int xRemainder = tiledWidth - (xTileCount * TEX_WIDTH);
@@ -117,7 +111,7 @@ public class FluidTank extends AbstractWidget {
                     int maskTop = TEX_HEIGHT - height;
                     int maskRight = TEX_WIDTH - width;
 
-                    drawTextureWithMasking(x, y, sprite, maskTop, maskRight, 100);
+                    drawTextureWithMasking(buffer, x, y, sprite, maskTop, maskRight, color);
                 }
             }
         }
@@ -135,16 +129,7 @@ public class FluidTank extends AbstractWidget {
         return IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack);
     }
 
-    private static void setGLColorFromInt(int color) {
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-        float alpha = ((color >> 24) & 0xFF) / 255F;
-
-        RenderSystem.setShaderColor(red, green, blue, alpha);
-    }
-
-    private static void drawTextureWithMasking(float xCoord, float yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, float zLevel) {
+    private static void drawTextureWithMasking(VertexConsumer vertexConsumer, float xCoord, float yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, int color) {
         float uMin = textureSprite.getU0();
         float uMax = textureSprite.getU1();
         float vMin = textureSprite.getV0();
@@ -152,11 +137,12 @@ public class FluidTank extends AbstractWidget {
         uMax = uMax - (maskRight / 16F * (uMax - uMin));
         vMax = vMax - (maskTop / 16F * (vMax - vMin));
 
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferBuilder.addVertex(xCoord, yCoord + 16, zLevel).setUv(uMin, vMax);
-        bufferBuilder.addVertex(xCoord + 16 - maskRight, yCoord + 16, zLevel).setUv(uMax, vMax);
-        bufferBuilder.addVertex(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).setUv(uMax, vMin);
-        bufferBuilder.addVertex(xCoord, yCoord + maskTop, zLevel).setUv(uMin, vMin);
+        int zLevel = 100;
+
+        vertexConsumer.addVertex(xCoord, yCoord + 16, zLevel).setUv(uMin, vMax).setColor(color);
+        vertexConsumer.addVertex(xCoord + 16 - maskRight, yCoord + 16, zLevel).setUv(uMax, vMax).setColor(color);
+        vertexConsumer.addVertex(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).setUv(uMax, vMin).setColor(color);
+        vertexConsumer.addVertex(xCoord, yCoord + maskTop, zLevel).setUv(uMin, vMin).setColor(color);
     }
 
     @Override
