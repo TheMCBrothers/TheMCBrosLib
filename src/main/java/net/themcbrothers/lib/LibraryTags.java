@@ -15,6 +15,6 @@ public class LibraryTags {
     }
 
     public static class Items {
-        public static final TagKey<Item> TOOLS_WRENCHES = TagUtils.commonItemTag("tools/wrenches");
+        public static final TagKey<Item> TOOLS_WRENCH = TagUtils.commonItemTag("tools/wrench");
     }
 }
