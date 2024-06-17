@@ -11,11 +11,10 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  * @author TheMCLoveMan
  */
 public class LibDataComponents {
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ENERGY = TheMCBrosLib.DATA_COMPONENT_TYPES.register("energy",
-            () -> DataComponentType.<Integer>builder()
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ENERGY = TheMCBrosLib.DATA_COMPONENT_TYPES
+            .registerComponentType("energy", builder -> builder
                     .persistent(ExtraCodecs.NON_NEGATIVE_INT)
-                    .networkSynchronized(ByteBufCodecs.VAR_INT)
-                    .build());
+                    .networkSynchronized(ByteBufCodecs.VAR_INT));
 
     static void init() {
     }
