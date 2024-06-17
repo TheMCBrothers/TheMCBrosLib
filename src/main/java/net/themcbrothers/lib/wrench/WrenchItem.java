@@ -71,7 +71,6 @@ public class WrenchItem extends Item implements Wrench {
             return InteractionResult.SUCCESS;
         }
 
-        // just fail
-        return InteractionResult.FAIL;
+        return InteractionResult.PASS;
     }
 }
