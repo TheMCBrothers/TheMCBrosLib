@@ -23,12 +23,12 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.energy.ComponentEnergyStorage;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.themcbrothers.lib.config.Config;
 import net.themcbrothers.lib.energy.EnergyContainerItem;
-import net.themcbrothers.lib.energy.EnergyConversionStorage;
 import net.themcbrothers.lib.util.ComponentFormatter;
 import net.themcbrothers.lib.wrench.WrenchItem;
 import org.apache.logging.log4j.LogManager;
@@ -62,7 +62,9 @@ public class TheMCBrosLib {
         modEventBus.addListener(EventPriority.HIGH, RegisterCapabilitiesEvent.class, event -> {
             for (Item item : BuiltInRegistries.ITEM) {
                 if (item instanceof EnergyContainerItem containerItem) {
-                    event.registerItem(Capabilities.EnergyStorage.ITEM, (stack, ctx) -> new EnergyConversionStorage(containerItem, stack), item);
+                    event.registerItem(Capabilities.EnergyStorage.ITEM, (stack, ctx) -> new ComponentEnergyStorage(
+                            stack, LibDataComponents.ENERGY.get(), containerItem.getCapacity(),
+                            containerItem.getMaxReceive(), containerItem.getMaxExtract()), item);
                 }
             }
         });
