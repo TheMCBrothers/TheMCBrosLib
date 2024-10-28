@@ -23,6 +23,6 @@ public class DataGeneration {
         LibraryTagsProvider.Blocks blockTagsProvider = new LibraryTagsProvider.Blocks(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new LibraryTagsProvider.Items(packOutput, lookupProvider, blockTagsProvider.contentsGetter()));
-        generator.addProvider(event.includeServer(), new LibraryRecipeProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new LibraryRecipeProvider.Runner(packOutput, lookupProvider));
     }
 }

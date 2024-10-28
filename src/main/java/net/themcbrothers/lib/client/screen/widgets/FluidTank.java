@@ -92,7 +92,8 @@ public class FluidTank extends AbstractWidget {
     }
 
     protected void drawTiledSprite(GuiGraphics guiGraphics, final int xPosition, final int yPosition, final int tiledWidth, final int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
-        final VertexConsumer buffer = guiGraphics.bufferSource().getBuffer(LibRenderTypes.FLUID_GUI);
+        // TODO: use guiGraphics#blit method
+        final VertexConsumer buffer = guiGraphics.bufferSource.getBuffer(LibRenderTypes.FLUID_GUI);
 
         final int xTileCount = tiledWidth / TEX_WIDTH;
         final int xRemainder = tiledWidth - (xTileCount * TEX_WIDTH);

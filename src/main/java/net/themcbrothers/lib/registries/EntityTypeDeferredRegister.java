@@ -33,7 +33,7 @@ public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> 
      * @return Entity registry object
      */
     public <T extends Entity> DeferredEntityType<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> sup) {
-        return this.register(name, () -> sup.get().build(getNamespace() + ":" + name));
+        return this.register(name, () -> sup.get().build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(getNamespace(), name))));
     }
 
     /**

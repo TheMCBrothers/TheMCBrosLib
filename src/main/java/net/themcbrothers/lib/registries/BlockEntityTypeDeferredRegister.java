@@ -31,17 +31,6 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
     }
 
     /**
-     * Gets the data fixer type for the block entity instance
-     *
-     * @param name Block entity name
-     * @return Data fixer type
-     */
-    @Nullable
-    private Type<?> getType(String name) {
-        return Util.fetchChoiceType(References.BLOCK_ENTITY, getNamespace() + ":" + name);
-    }
-
-    /**
      * Registers a block entity type for a single block
      *
      * @param name    Block entity name
@@ -50,7 +39,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
      * @return Registry object instance
      */
     public <T extends BlockEntity> DeferredBlockEntityType<T> register(String name, BlockEntityType.BlockEntitySupplier<? extends T> factory, Supplier<? extends Block> block) {
-        this.register(name, () -> BlockEntityType.Builder.<T>of(factory, block.get()).build(getType(name)));
+        this.register(name, () -> new BlockEntityType<>(factory, block.get()));
         return DeferredBlockEntityType.createBlockEntityType(ResourceLocation.fromNamespaceAndPath(getNamespace(), name));
     }
 
@@ -66,7 +55,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
         super.register(name, () -> {
             ImmutableSet.Builder<Block> blocks = new ImmutableSet.Builder<>();
             blockCollector.accept(blocks);
-            return new BlockEntityType<>(factory, blocks.build(), getType(name));
+            return new BlockEntityType<>(factory, blocks.build());
         });
 
         return DeferredBlockEntityType.createBlockEntityType(ResourceLocation.fromNamespaceAndPath(getNamespace(), name));

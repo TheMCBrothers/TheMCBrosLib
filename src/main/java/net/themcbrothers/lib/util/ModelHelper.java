@@ -3,7 +3,7 @@ package net.themcbrothers.lib.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 import javax.annotation.Nullable;
@@ -19,15 +19,15 @@ public final class ModelHelper {
     /**
      * Gets the model for the given item
      *
-     * @param item  Item provider
+     * @param stack Item stack
      * @param clazz Class type to cast result into
      * @param <T>   Class type
      * @return Item model, or null if its missing or the wrong class type
      */
     @Nullable
-    public static <T extends BakedModel> T getBakedModel(ItemLike item, Class<T> clazz) {
+    public static <T extends BakedModel> T getBakedModel(ItemStack stack, Class<T> clazz) {
         Minecraft minecraft = Minecraft.getInstance();
-        BakedModel baked = minecraft.getItemRenderer().getItemModelShaper().getItemModel(item.asItem());
+        BakedModel baked = minecraft.getItemRenderer().itemModelShaper.getItemModel(stack);
 
         if (clazz.isInstance(baked)) {
             return clazz.cast(baked);

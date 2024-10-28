@@ -3,7 +3,9 @@ package net.themcbrothers.lib;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -42,7 +44,7 @@ public class TheMCBrosLib {
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new, new Item.Properties().stacksTo(1));
 
     // Data Components
-    static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(MOD_ID);
+    static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
 
     public TheMCBrosLib(IEventBus modEventBus, ModContainer modContainer) {
         NeoForgeMod.enableMilkFluid();
@@ -76,12 +78,12 @@ public class TheMCBrosLib {
         if (event.getItemStack().getItem() instanceof WrenchItem) {
             Entity target = event.getTarget();
 
-            if (event.getEntity().isSecondaryUseActive()) {
+            if (event.getLevel() instanceof ServerLevel serverLevel && event.getEntity().isSecondaryUseActive()) {
                 if (target instanceof Boat boat) {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
 
-                    ItemEntity itemEntity = target.spawnAtLocation(boat.getDropItem());
+                    ItemEntity itemEntity = target.spawnAtLocation(serverLevel, boat.getDropItem());
 
                     if (itemEntity != null) {
                         itemEntity.setNoPickUpDelay();
@@ -99,7 +101,7 @@ public class TheMCBrosLib {
                             stack.set(DataComponents.CUSTOM_NAME, target.getCustomName());
                         }
 
-                        ItemEntity itemEntity = target.spawnAtLocation(stack);
+                        ItemEntity itemEntity = target.spawnAtLocation(serverLevel, stack);
 
                         if (itemEntity != null) {
                             itemEntity.setNoPickUpDelay();
@@ -107,11 +109,11 @@ public class TheMCBrosLib {
                     }
 
                     if (minecart instanceof AbstractMinecartContainer minecartContainer) {
-                        minecartContainer.chestVehicleDestroyed(event.getLevel().damageSources().generic(), event.getLevel(), target);
+                        minecartContainer.chestVehicleDestroyed(event.getLevel().damageSources().generic(), serverLevel, target);
                     }
 
                     target.ejectPassengers();
-                    target.kill();
+                    target.kill(serverLevel);
                 }
             }
         }

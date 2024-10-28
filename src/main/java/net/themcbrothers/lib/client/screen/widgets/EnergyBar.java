@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.themcbrothers.lib.TheMCBrosLib;
@@ -21,6 +21,8 @@ import static net.themcbrothers.lib.TheMCBrosLib.TEXT_UTILS;
  */
 public class EnergyBar extends AbstractWidget {
     public static final ResourceLocation TEXTURE = TheMCBrosLib.rl("textures/gui/energy_bar.png");
+    public static final int TEXTURE_WIDTH = 256;
+    public static final int TEXTURE_HEIGHT = 256;
 
     private final EnergyProvider energyProvider;
     private final AbstractContainerScreen<?> screen;
@@ -43,9 +45,9 @@ public class EnergyBar extends AbstractWidget {
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         int xOff = this.unit.ordinal() * (this.width * 2 + 2);
         int yOff = this.size.getYOff();
-        guiGraphics.blit(TEXTURE, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2);
+        guiGraphics.blit(RenderType::guiTextured, TEXTURE, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         int i = this.getScaledHeight();
-        guiGraphics.blit(TEXTURE, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i);
+        guiGraphics.blit(RenderType::guiTextured, TEXTURE, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 
     public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
