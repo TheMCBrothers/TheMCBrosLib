@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -48,7 +48,7 @@ public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> 
      */
     public <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup, int primary, int secondary) {
         var object = this.registerEntity(name, sup);
-        this.itemRegister.register(name + "_spawn_egg", () -> new DeferredSpawnEggItem(object, primary, secondary, new Item.Properties()));
+        this.itemRegister.register(name + "_spawn_egg", () -> new SpawnEggItem(object.get(), primary, secondary, new Item.Properties()));
         return object;
     }
 
