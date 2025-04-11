@@ -1,7 +1,5 @@
 package net.themcbrothers.lib.client.screen.widgets;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -39,10 +37,6 @@ public class EnergyBar extends AbstractWidget {
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         int xOff = this.unit.ordinal() * (this.width * 2 + 2);
         int yOff = this.size.getYOff();
         guiGraphics.blit(RenderType::guiTextured, TEXTURE, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2, TEXTURE_WIDTH, TEXTURE_HEIGHT);

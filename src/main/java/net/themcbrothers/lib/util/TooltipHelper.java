@@ -2,6 +2,7 @@ package net.themcbrothers.lib.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -99,8 +100,8 @@ public final class TooltipHelper {
      * @param tooltip   Tooltip
      * @param itemStack Item Stack
      */
-    public static void appendModNameFromItem(List<Component> tooltip, ItemStack itemStack) {
-        ModHelper.getCreatorModId(itemStack)
+    public static void appendModNameFromItem(HolderLookup.Provider registries, List<Component> tooltip, ItemStack itemStack) {
+        ModHelper.getCreatorModId(registries, itemStack)
                 .map(ModHelper::getModName)
                 .ifPresent(modName -> appendModName(tooltip, modName));
     }

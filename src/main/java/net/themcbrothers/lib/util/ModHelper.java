@@ -1,5 +1,6 @@
 package net.themcbrothers.lib.util;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -50,12 +51,12 @@ public final class ModHelper {
      * @param itemStack Item Stack
      * @return Creator Mod ID
      */
-    public static Optional<String> getCreatorModId(ItemStack itemStack) {
+    public static Optional<String> getCreatorModId(HolderLookup.Provider registries, ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return Optional.empty();
         }
 
-        String modId = itemStack.getItem().getCreatorModId(itemStack);
+        String modId = itemStack.getItem().getCreatorModId(registries, itemStack);
         return Optional.ofNullable(modId);
     }
 

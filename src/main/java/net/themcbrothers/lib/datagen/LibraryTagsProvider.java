@@ -6,17 +6,15 @@ import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.themcbrothers.lib.LibraryTags;
 import net.themcbrothers.lib.TheMCBrosLib;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
 public class LibraryTagsProvider {
     public static class Blocks extends BlockTagsProvider {
-        public Blocks(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-            super(output, lookupProvider, TheMCBrosLib.MOD_ID, existingFileHelper);
+        public Blocks(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+            super(output, lookupProvider, TheMCBrosLib.MOD_ID);
         }
 
         @Override

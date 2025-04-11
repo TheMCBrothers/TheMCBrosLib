@@ -1,16 +1,16 @@
 package net.themcbrothers.lib.client.render;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.themcbrothers.lib.TheMCBrosLib;
+
+import static net.minecraft.client.renderer.RenderStateShard.*;
 
 /**
  * Class for render types defined by TheMCBrosLib
  */
-public final class LibRenderTypes extends RenderType {
-    private LibRenderTypes(String pName, VertexFormat pFormat, VertexFormat.Mode pMode, int pBufferSize, boolean pAffectsCrumbling, boolean pSortOnUpload, Runnable pSetupState, Runnable pClearState) {
-        super(pName, pFormat, pMode, pBufferSize, pAffectsCrumbling, pSortOnUpload, pSetupState, pClearState);
+public final class LibRenderTypes {
+    private LibRenderTypes() {
     }
 
     /**
@@ -18,12 +18,14 @@ public final class LibRenderTypes extends RenderType {
      */
     public static final RenderType FLUID = RenderType.create(
             TheMCBrosLib.MOD_ID + ":fluid",
-            DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true,
+            786432,
+            false,
+            true,
+            RenderPipelines.TRANSLUCENT,
             RenderType.CompositeState.builder()
                     .setLightmapState(LIGHTMAP)
-                    .setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER)
                     .setTextureState(BLOCK_SHEET_MIPPED)
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setOutputState(TRANSLUCENT_TARGET)
                     .createCompositeState(false));
 
     /**
@@ -31,11 +33,13 @@ public final class LibRenderTypes extends RenderType {
      */
     public static final RenderType FLUID_GUI = RenderType.create(
             TheMCBrosLib.MOD_ID + ":fluid_gui",
-            DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+            786432,
+            false,
+            true,
+            RenderPipelines.TRANSLUCENT,
             RenderType.CompositeState.builder()
-                    .setShaderState(POSITION_TEXTURE_COLOR_SHADER)
-                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
                     .setTextureState(BLOCK_SHEET_MIPPED)
-                    .setDepthTestState(LEQUAL_DEPTH_TEST)
+                    .setOutputState(TRANSLUCENT_TARGET)
                     .createCompositeState(false));
 }
