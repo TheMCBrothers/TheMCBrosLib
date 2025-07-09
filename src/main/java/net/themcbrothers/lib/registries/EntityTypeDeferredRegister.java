@@ -41,12 +41,14 @@ public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> 
      *
      * @param name      Entity name
      * @param sup       Entity builder instance
+     * @param primary   Primary egg color
+     * @param secondary Secondary egg color
      * @param <T>       Entity class type
      * @return Entity registry object
      */
-    public <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup) {
+    public <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup, int primary, int secondary) {
         var object = this.registerEntity(name, sup);
-        this.itemRegister.register(name + "_spawn_egg", () -> new SpawnEggItem(object.get(), new Item.Properties()));
+        this.itemRegister.registerItem(name + "_spawn_egg", props -> new SpawnEggItem(object.get(), props));
         return object;
     }
 
