@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 
 import java.util.List;
@@ -72,16 +72,16 @@ public final class JsonHelper {
     }
 
     /**
-     * Gets a {@link ResourceLocation} from JSON
+     * Gets a {@link Identifier} from JSON
      *
      * @param json JSON object
      * @param key  Key to fetch
      * @return Resource location parsed
      * @throws JsonSyntaxException if failed
      */
-    public static ResourceLocation getResourceLocation(JsonObject json, String key) {
+    public static Identifier getIdentifier(JsonObject json, String key) {
         String text = GsonHelper.getAsString(json, key);
-        ResourceLocation location = ResourceLocation.tryParse(text);
+        Identifier location = Identifier.tryParse(text);
         if (location == null) {
             throw new JsonSyntaxException("Expected " + key + " to be a Resource location, was '" + text + "'");
         }

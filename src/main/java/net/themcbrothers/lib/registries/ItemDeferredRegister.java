@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.registries;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -15,7 +15,7 @@ public class ItemDeferredRegister extends DeferredRegister.Items {
 
     @Deprecated
     @Override
-    public <I extends Item> DeferredItem<I> register(String name, Function<ResourceLocation, ? extends I> func) {
+    public <I extends Item> DeferredItem<I> register(String name, Function<Identifier, ? extends I> func) {
         return super.register(name, func);
     }
 

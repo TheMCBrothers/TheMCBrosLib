@@ -1,8 +1,9 @@
 package net.themcbrothers.lib.util;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -25,7 +26,7 @@ public final class ModHelper {
      * @param entry Registry Entry
      * @return Resource Location as Optional
      */
-    public static <T> Optional<ResourceLocation> registryNameOf(Registry<T> registry, T entry) {
+    public static <T> Optional<Identifier> registryNameOf(Registry<T> registry, T entry) {
         return Optional.ofNullable(registry.getKey(entry));
     }
 
@@ -41,7 +42,7 @@ public final class ModHelper {
         }
 
         return registryNameOf(BuiltInRegistries.FLUID, fluidStack.getFluid())
-                .map(ResourceLocation::getNamespace);
+                .map(Identifier::getNamespace);
     }
 
     /**
@@ -50,12 +51,12 @@ public final class ModHelper {
      * @param itemStack Item Stack
      * @return Creator Mod ID
      */
-    public static Optional<String> getCreatorModId(ItemStack itemStack) {
+    public static Optional<String> getCreatorModId(HolderLookup.Provider registries, ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return Optional.empty();
         }
 
-        String modId = itemStack.getItem().getCreatorModId(itemStack);
+        String modId = itemStack.getItem().getCreatorModId(registries, itemStack);
         return Optional.ofNullable(modId);
     }
 

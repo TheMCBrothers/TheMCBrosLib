@@ -1,11 +1,12 @@
 package net.themcbrothers.lib.energy;
 
-import net.neoforged.neoforge.energy.EnergyStorage;
+import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 /**
- * Extended implementation of {@link EnergyStorage}
+ * Extended implementation of {@link SimpleEnergyHandler}
  */
-public class ExtendedEnergyStorage extends EnergyStorage {
+public class ExtendedEnergyStorage extends SimpleEnergyHandler {
     public ExtendedEnergyStorage(int capacity) {
         super(capacity);
     }
@@ -22,12 +23,9 @@ public class ExtendedEnergyStorage extends EnergyStorage {
         super(capacity, maxReceive, maxExtract, energy);
     }
 
-    public void setEnergyStored(int energy) {
-        this.energy = energy;
-    }
-
-    public void setMaxEnergyStored(int energy) {
-        this.capacity = energy;
+    public void setCapacity(int capacity) {
+        this.set(Math.min(this.energy, capacity));
+        this.capacity = capacity;
     }
 
     /**
@@ -36,10 +34,9 @@ public class ExtendedEnergyStorage extends EnergyStorage {
      * @param energy Amount of energy
      */
     public void consumeEnergy(int energy) {
-        this.energy -= energy;
-
-        if (this.energy < 0) {
-            this.energy = 0;
+        try (Transaction tx = Transaction.openRoot()) {
+            this.extract(energy, tx);
+            tx.commit();
         }
     }
 
@@ -49,15 +46,14 @@ public class ExtendedEnergyStorage extends EnergyStorage {
      * @param energy Amount of energy
      */
     public void growEnergy(int energy) {
-        this.energy += energy;
-
-        if (this.energy > this.capacity) {
-            this.energy = this.capacity;
+        try (Transaction tx = Transaction.openRoot()) {
+            this.insert(energy, tx);
+            tx.commit();
         }
     }
 
-    public int getMaxReceive() {
-        return this.maxReceive;
+    public int getMaxInsert() {
+        return this.maxInsert;
     }
 
     public int getMaxExtract() {

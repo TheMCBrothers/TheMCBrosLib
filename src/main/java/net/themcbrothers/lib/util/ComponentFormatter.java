@@ -5,7 +5,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
 import net.themcbrothers.lib.energy.EnergyUnit;
 
 /**
@@ -49,6 +52,7 @@ public class ComponentFormatter {
 
     public MutableComponent fluidWithMax(IFluidHandler tank) {
         FluidStack fluid = tank.getFluidInTank(0);
+
         String s1 = String.format(FORMAT, fluid.getAmount());
         String s2 = String.format(FORMAT, tank.getTankCapacity(0));
         return translate("misc", "fluidWithMax", s1, s2);

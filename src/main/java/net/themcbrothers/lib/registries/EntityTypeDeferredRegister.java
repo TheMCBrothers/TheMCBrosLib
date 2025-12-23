@@ -3,11 +3,12 @@ package net.themcbrothers.lib.registries;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -32,7 +33,7 @@ public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> 
      * @return Entity registry object
      */
     public <T extends Entity> DeferredEntityType<EntityType<T>> registerEntity(String name, Supplier<EntityType.Builder<T>> sup) {
-        return this.register(name, () -> sup.get().build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(getNamespace(), name))));
+        return this.register(name, () -> sup.get().build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(getNamespace(), name))));
     }
 
     /**
@@ -40,19 +41,17 @@ public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> 
      *
      * @param name      Entity name
      * @param sup       Entity builder instance
-     * @param primary   Primary egg color
-     * @param secondary Secondary egg color
      * @param <T>       Entity class type
      * @return Entity registry object
      */
-    public <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup, int primary, int secondary) {
+    public <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup) {
         var object = this.registerEntity(name, sup);
-        this.itemRegister.registerItem(name + "_spawn_egg", props -> new DeferredSpawnEggItem(object, primary, secondary, props));
+        this.itemRegister.register(name + "_spawn_egg", () -> new SpawnEggItem(new Item.Properties()));
         return object;
     }
 
     @Override
-    public <I extends EntityType<?>> DeferredEntityType<I> register(String name, Function<ResourceLocation, ? extends I> func) {
+    public <I extends EntityType<?>> DeferredEntityType<I> register(String name, Function<Identifier, ? extends I> func) {
         return (DeferredEntityType<I>) super.register(name, func);
     }
 
@@ -62,7 +61,7 @@ public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> 
     }
 
     @Override
-    protected <I extends EntityType<?>> DeferredHolder<EntityType<?>, I> createHolder(ResourceKey<? extends Registry<EntityType<?>>> registryKey, ResourceLocation key) {
+    protected <I extends EntityType<?>> DeferredHolder<EntityType<?>, I> createHolder(ResourceKey<? extends Registry<EntityType<?>>> registryKey, Identifier key) {
         return DeferredEntityType.createEntity(ResourceKey.create(registryKey, key));
     }
 

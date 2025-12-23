@@ -1,20 +1,16 @@
 package net.themcbrothers.lib.registries;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.datafixers.types.Type;
 import jdk.jfr.Experimental;
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,7 +20,7 @@ import java.util.function.Supplier;
  * Deferred register for {@link BlockEntityType}s
  */
 @Experimental
-@SuppressWarnings({"DataFlowIssue", "unchecked", "unused"})
+@SuppressWarnings({"unchecked", "unused"})
 public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntityType<?>> {
     private BlockEntityTypeDeferredRegister(String namespace) {
         super(Registries.BLOCK_ENTITY_TYPE, namespace);
@@ -40,7 +36,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
      */
     public <T extends BlockEntity> DeferredBlockEntityType<T> register(String name, BlockEntityType.BlockEntitySupplier<? extends T> factory, Supplier<? extends Block> block) {
         this.register(name, () -> new BlockEntityType<>(factory, block.get()));
-        return DeferredBlockEntityType.createBlockEntityType(ResourceLocation.fromNamespaceAndPath(getNamespace(), name));
+        return DeferredBlockEntityType.createBlockEntityType(Identifier.fromNamespaceAndPath(getNamespace(), name));
     }
 
     /**
@@ -58,7 +54,7 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
             return new BlockEntityType<>(factory, blocks.build());
         });
 
-        return DeferredBlockEntityType.createBlockEntityType(ResourceLocation.fromNamespaceAndPath(getNamespace(), name));
+        return DeferredBlockEntityType.createBlockEntityType(Identifier.fromNamespaceAndPath(getNamespace(), name));
     }
 
     @Deprecated
@@ -69,12 +65,12 @@ public class BlockEntityTypeDeferredRegister extends DeferredRegister<BlockEntit
 
     @Deprecated
     @Override
-    public <I extends BlockEntityType<?>> DeferredHolder<BlockEntityType<?>, I> register(String name, Function<ResourceLocation, ? extends I> func) {
+    public <I extends BlockEntityType<?>> DeferredHolder<BlockEntityType<?>, I> register(String name, Function<Identifier, ? extends I> func) {
         return super.register(name, func);
     }
 
     @Override
-    protected <I extends BlockEntityType<?>> DeferredHolder<BlockEntityType<?>, I> createHolder(ResourceKey<? extends Registry<BlockEntityType<?>>> registryKey, ResourceLocation key) {
+    protected <I extends BlockEntityType<?>> DeferredHolder<BlockEntityType<?>, I> createHolder(ResourceKey<? extends Registry<BlockEntityType<?>>> registryKey, Identifier key) {
         return (DeferredHolder<BlockEntityType<?>, I>) DeferredBlockEntityType.createBlockEntityType(ResourceKey.create(registryKey, key));
     }
 

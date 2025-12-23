@@ -3,7 +3,7 @@ package net.themcbrothers.lib.util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -29,6 +29,6 @@ public final class TagUtils {
     }
 
     public static <T> TagKey<T> commonTag(ResourceKey<? extends Registry<T>> registry, String name) {
-        return TagKey.create(registry, ResourceLocation.fromNamespaceAndPath("c", name));
+        return TagKey.create(registry, Identifier.fromNamespaceAndPath("c", name));
     }
 }

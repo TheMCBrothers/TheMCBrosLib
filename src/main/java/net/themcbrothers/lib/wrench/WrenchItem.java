@@ -20,7 +20,7 @@ import net.themcbrothers.lib.util.CreativeTabHelper;
 public class WrenchItem extends Item implements Wrench {
     public WrenchItem(Properties properties) {
         super(properties);
-        CreativeTabHelper.addToCreativeTabs(() -> this, CreativeModeTabs.TOOLS_AND_UTILITIES.location());
+        CreativeTabHelper.addToCreativeTabs(() -> this, CreativeModeTabs.TOOLS_AND_UTILITIES.identifier());
     }
 
     @Override

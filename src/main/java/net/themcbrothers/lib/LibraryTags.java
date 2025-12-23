@@ -11,7 +11,7 @@ import net.themcbrothers.lib.util.TagUtils;
  */
 public class LibraryTags {
     public static class Blocks {
-        public static final TagKey<Block> WRENCHABLE = TagKey.create(Registries.BLOCK, TheMCBrosLib.rl("wrenchable"));
+        public static final TagKey<Block> WRENCHABLE = TagKey.create(Registries.BLOCK, TheMCBrosLib.id("wrenchable"));
     }
 
     public static class Items {

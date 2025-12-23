@@ -4,14 +4,14 @@ package net.themcbrothers.lib;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecartContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
@@ -23,10 +23,10 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.energy.ComponentEnergyStorage;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.transfer.energy.ItemAccessEnergyHandler;
 import net.themcbrothers.lib.config.Config;
 import net.themcbrothers.lib.energy.EnergyContainerItem;
 import net.themcbrothers.lib.util.ComponentFormatter;
@@ -41,7 +41,7 @@ public class TheMCBrosLib {
     public static final ComponentFormatter TEXT_UTILS = new ComponentFormatter(MOD_ID);
 
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
-    public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new, item -> new Item.Properties().stacksTo(1));
 
     // Data Components
     static final DeferredRegister.DataComponents DATA_COMPONENT_TYPES = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
@@ -62,16 +62,17 @@ public class TheMCBrosLib {
         modEventBus.addListener(EventPriority.HIGH, RegisterCapabilitiesEvent.class, event -> {
             for (Item item : BuiltInRegistries.ITEM) {
                 if (item instanceof EnergyContainerItem containerItem) {
-                    event.registerItem(Capabilities.EnergyStorage.ITEM, (stack, ctx) -> new ComponentEnergyStorage(
-                            stack, LibDataComponents.ENERGY.get(), containerItem.getCapacity(),
-                            containerItem.getMaxReceive(), containerItem.getMaxExtract()), item);
+                    event.registerItem(Capabilities.Energy.ITEM, (stack, ctx) -> new ItemAccessEnergyHandler(
+                            ctx, LibDataComponents.ENERGY.get(), containerItem.getCapacity(),
+                            containerItem.getMaxReceive(), containerItem.getMaxExtract()) {
+                    }, item);
                 }
             }
         });
     }
 
-    public static ResourceLocation rl(String s) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, s);
+    public static Identifier id(String s) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, s);
     }
 
     private void onPlayerInteractWithEntity(final PlayerInteractEvent.EntityInteract event) {
@@ -96,7 +97,7 @@ public class TheMCBrosLib {
 
                     ItemStack stack = minecart.getPickResult();
 
-                    if (stack != null && !stack.isEmpty()) {
+                    if (!stack.isEmpty()) {
                         if (target.hasCustomName()) {
                             stack.set(DataComponents.CUSTOM_NAME, target.getCustomName());
                         }
