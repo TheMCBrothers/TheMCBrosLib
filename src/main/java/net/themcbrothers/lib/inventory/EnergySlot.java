@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.inventory;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * @since 4.2.0
  */
 public class EnergySlot extends Slot {
-    public static final ResourceLocation EMPTY_SLOT_ENERGY = TheMCBrosLib.rl("item/empty_slot_energy");
+    public static final Identifier EMPTY_SLOT_ENERGY = TheMCBrosLib.id("item/empty_slot_energy");
 
     private final ItemMode itemMode;
     private final boolean showIcon;
@@ -57,7 +57,7 @@ public class EnergySlot extends Slot {
 
     @Nullable
     @Override
-    public ResourceLocation getNoItemIcon() {
+    public Identifier getNoItemIcon() {
         return this.showIcon ? EMPTY_SLOT_ENERGY : super.getNoItemIcon();
     }
 
@@ -69,12 +69,13 @@ public class EnergySlot extends Slot {
      * @return {@code true} if the given {@link ItemStack} valid for an {@link EnergySlot}, otherwise {@code false}
      */
     public static boolean isValid(ItemStack stack, ItemMode itemMode) {
-        return Optional.ofNullable(stack.getCapability(Capabilities.EnergyStorage.ITEM)).map(energyStorage -> switch (itemMode) {
-            case EXTRACT -> energyStorage.canExtract();
-            case RECEIVE -> energyStorage.canReceive();
-            case EXTRACT_AND_RECEIVE -> energyStorage.canExtract() && energyStorage.canReceive();
-            case EXTRACT_OR_RECEIVE -> energyStorage.canExtract() || energyStorage.canReceive();
-        }).orElse(false);
+        return true; // TODO: 26.1
+//        return Optional.ofNullable(stack.getCapability(Capabilities.Energy.ITEM)).map(energyStorage -> switch (itemMode) {
+//            case EXTRACT -> energyStorage.canExtract();
+//            case RECEIVE -> energyStorage.canReceive();
+//            case EXTRACT_AND_RECEIVE -> energyStorage.canExtract() && energyStorage.canReceive();
+//            case EXTRACT_OR_RECEIVE -> energyStorage.canExtract() || energyStorage.canReceive();
+//        }).orElse(false);
     }
 
     /**

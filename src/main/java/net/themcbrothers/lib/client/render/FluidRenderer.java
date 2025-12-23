@@ -4,12 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.SpriteGetter;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -30,8 +29,8 @@ public class FluidRenderer {
      * @param sprite Sprite name
      * @return Sprite location
      */
-    public static TextureAtlasSprite getBlockSprite(ResourceLocation sprite) {
-        return Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(sprite);
+    public static TextureAtlasSprite getBlockSprite(Identifier sprite) {
+        return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(sprite);
     }
 
     /**
@@ -367,6 +366,8 @@ public class FluidRenderer {
         }
 
         // draw cuboid
-        renderCuboid(poseStack, buffer.getBuffer(LibRenderTypes.FLUID), cube, still, flowing, from, to, attributes.getTintColor(fluid), light, isGas);
+
+        // todo: render type
+        renderCuboid(poseStack, buffer.getBuffer(RenderTypes.translucentMovingBlock()), cube, still, flowing, from, to, attributes.getTintColor(fluid), light, isGas);
     }
 }

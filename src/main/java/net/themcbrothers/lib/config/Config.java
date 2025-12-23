@@ -7,7 +7,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import net.themcbrothers.lib.TheMCBrosLib;
 import org.apache.commons.lang3.tuple.Pair;
 
-@EventBusSubscriber(modid = TheMCBrosLib.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TheMCBrosLib.MOD_ID)
 public class Config {
     public static final ClientConfig CLIENT_CONFIG;
     public static final ModConfigSpec CLIENT_SPEC;

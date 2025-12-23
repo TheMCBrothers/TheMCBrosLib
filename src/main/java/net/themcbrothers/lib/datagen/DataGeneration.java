@@ -10,7 +10,7 @@ import net.themcbrothers.lib.TheMCBrosLib;
 
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = TheMCBrosLib.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TheMCBrosLib.MOD_ID)
 public class DataGeneration {
     @SubscribeEvent
     static void dataGen(final GatherDataEvent.Server event) {
@@ -18,9 +18,8 @@ public class DataGeneration {
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        LibraryTagsProvider.Blocks blockTagsProvider = new LibraryTagsProvider.Blocks(packOutput, lookupProvider);
-        generator.addProvider(true, blockTagsProvider);
-        generator.addProvider(true, new LibraryTagsProvider.Items(packOutput, lookupProvider, blockTagsProvider.contentsGetter()));
+        generator.addProvider(true, new LibraryTagsProvider.Blocks(packOutput, lookupProvider));
+        generator.addProvider(true, new LibraryTagsProvider.Items(packOutput, lookupProvider));
         generator.addProvider(true, new LibraryRecipeProvider.Runner(packOutput, lookupProvider));
     }
 }

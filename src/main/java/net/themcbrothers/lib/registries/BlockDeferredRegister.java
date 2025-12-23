@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.registries;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -109,7 +109,7 @@ public class BlockDeferredRegister extends DeferredRegister.Blocks {
 
     @Deprecated
     @Override
-    public <B extends Block> DeferredBlock<B> register(String name, Function<ResourceLocation, ? extends B> func) {
+    public <B extends Block> DeferredBlock<B> register(String name, Function<Identifier, ? extends B> func) {
         return super.register(name, func);
     }
 
