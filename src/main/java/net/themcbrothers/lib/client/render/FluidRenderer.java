@@ -3,12 +3,14 @@ package net.themcbrothers.lib.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -16,6 +18,8 @@ import net.themcbrothers.lib.client.model.fluid.FluidCuboid;
 import net.themcbrothers.lib.client.model.fluid.FluidCuboid.FluidFace;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -24,13 +28,42 @@ import java.util.List;
  */
 public class FluidRenderer {
     /**
-     * Gets a block sprite from the given location
+     * Gets the still sprite for a fluid
      *
-     * @param sprite Sprite name
-     * @return Sprite location
+     * @param fluidStack Fluid stack
+     * @return Still atlas sprite
      */
-    public static TextureAtlasSprite getBlockSprite(Identifier sprite) {
-        return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(sprite);
+    public static TextureAtlasSprite getStillFluidSprite(@Nullable FluidStack fluidStack) {
+        if (fluidStack == null) {
+            return getBlockSprite(MissingTextureAtlasSprite.getLocation());
+        }
+
+        Fluid fluid = fluidStack.getFluid();
+        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
+        Identifier fluidStill = renderProperties.getStillTexture(fluidStack);
+        return getBlockSprite(fluidStill);
+    }
+
+    /**
+     * Gets the flowing sprite for a fluid
+     *
+     * @param fluidStack Fluid stack
+     * @return Still atlas sprite
+     */
+    public static TextureAtlasSprite getFlowingFluidSprite(@Nullable FluidStack fluidStack) {
+        if (fluidStack == null) {
+            return getBlockSprite(MissingTextureAtlasSprite.getLocation());
+        }
+
+        Fluid fluid = fluidStack.getFluid();
+        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
+        Identifier fluidFlowing = renderProperties.getFlowingTexture(fluidStack);
+        return getBlockSprite(fluidFlowing);
+    }
+
+    private static @NonNull TextureAtlasSprite getBlockSprite(Identifier sprite) {
+        Material material = ClientHooks.getBlockMaterial(sprite);
+        return Minecraft.getInstance().getAtlasManager().get(material);
     }
 
     /**
@@ -82,6 +115,10 @@ public class FluidRenderer {
         // start with texture coordinates
         float x1 = from.x(), y1 = from.y(), z1 = from.z();
         float x2 = to.x(), y2 = to.y(), z2 = to.z();
+
+        // Get the normal vector for this face
+        Vector3f normal = face.step();
+
         // choose UV based on the directions, some need to negate UV due to the direction
         // note that we use -UV instead of 1-UV as its slightly simpler and the later logic deals with negatives
         float u1, u2, v1, v2;
@@ -206,40 +243,40 @@ public class FluidRenderer {
         // add quads
         switch (face) {
             case DOWN -> {
-                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u1, v1).setLight(brightness);
-                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u2, v2).setLight(brightness);
-                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u3, v3).setLight(brightness);
-                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u4, v4).setLight(brightness);
+                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u3, v3).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u4, v4).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
             }
             case UP -> {
-                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u1, v1).setLight(brightness);
-                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u2, v2).setLight(brightness);
-                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u3, v3).setLight(brightness);
-                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u4, v4).setLight(brightness);
+                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(0, 0, 0);
+                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(0, 0, 0);
+                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u3, v3).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(0, 0, 0);
+                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u4, v4).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(0, 0, 0);
             }
             case NORTH -> {
-                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u1, v1).setLight(brightness);
-                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u2, v2).setLight(brightness);
-                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u3, v3).setLight(brightness);
-                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u4, v4).setLight(brightness);
+                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u3, v3).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u4, v4).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
             }
             case SOUTH -> {
-                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u1, v1).setLight(brightness);
-                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u2, v2).setLight(brightness);
-                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u3, v3).setLight(brightness);
-                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u4, v4).setLight(brightness);
+                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u3, v3).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u4, v4).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
             }
             case WEST -> {
-                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u1, v1).setLight(brightness);
-                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u2, v2).setLight(brightness);
-                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u3, v3).setLight(brightness);
-                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u4, v4).setLight(brightness);
+                renderer.addVertex(matrix, x1, y1, z2).setColor(color).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x1, y2, z2).setColor(color).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x1, y2, z1).setColor(color).setUv(u3, v3).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x1, y1, z1).setColor(color).setUv(u4, v4).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
             }
             case EAST -> {
-                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u1, v1).setLight(brightness);
-                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u2, v2).setLight(brightness);
-                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u3, v3).setLight(brightness);
-                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u4, v4).setLight(brightness);
+                renderer.addVertex(matrix, x2, y1, z1).setColor(color).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y2, z1).setColor(color).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y2, z2).setColor(color).setUv(u3, v3).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
+                renderer.addVertex(matrix, x2, y1, z2).setColor(color).setUv(u4, v4).setOverlay(OverlayTexture.NO_OVERLAY).setLight(brightness).setNormal(normal.x(), normal.y(), normal.z());
             }
         }
     }
@@ -247,19 +284,19 @@ public class FluidRenderer {
     /**
      * Renders a full fluid cuboid for the given data
      *
-     * @param poseStack Pose stack instance
-     * @param buffer    Buffer type
-     * @param still     Still sprite
-     * @param flowing   Flowing sprite
-     * @param cube      Fluid cuboid
-     * @param from      Fluid start
-     * @param to        Fluid end
-     * @param color     Fluid color
-     * @param light     Quad lighting
-     * @param isGas     If true, fluid is a gas
+     * @param pose    Pose
+     * @param buffer  Buffer type
+     * @param still   Still sprite
+     * @param flowing Flowing sprite
+     * @param cube    Fluid cuboid
+     * @param from    Fluid start
+     * @param to      Fluid end
+     * @param color   Fluid color
+     * @param light   Quad lighting
+     * @param isGas   If true, fluid is a gas
      */
-    public static void renderCuboid(PoseStack poseStack, VertexConsumer buffer, FluidCuboid cube, TextureAtlasSprite still, TextureAtlasSprite flowing, Vector3f from, Vector3f to, int color, int light, boolean isGas) {
-        Matrix4f matrix = poseStack.last().pose();
+    public static void renderCuboid(PoseStack.Pose pose, VertexConsumer buffer, FluidCuboid cube, TextureAtlasSprite still, TextureAtlasSprite flowing, Vector3f from, Vector3f to, int color, int light, boolean isGas) {
+        Matrix4f matrix = pose.pose();
         int rotation = isGas ? 180 : 0;
         for (Direction dir : Direction.values()) {
             FluidFace face = cube.getFace(dir);
@@ -274,13 +311,13 @@ public class FluidRenderer {
     /**
      * Renders a list of fluid cuboids
      *
-     * @param poseStack Pose stack instance
-     * @param buffer    Buffer instance
-     * @param cubes     List of cubes to render
-     * @param fluid     Fluid to use in rendering
-     * @param light     Light level from TER
+     * @param pose   Pose
+     * @param buffer Buffer instance
+     * @param cubes  List of cubes to render
+     * @param fluid  Fluid to use in rendering
+     * @param light  Light level from TER
      */
-    public static void renderCuboids(PoseStack poseStack, VertexConsumer buffer, List<FluidCuboid> cubes, FluidStack fluid, int light) {
+    public static void renderCuboids(PoseStack.Pose pose, VertexConsumer buffer, List<FluidCuboid> cubes, FluidStack fluid, int light) {
         if (fluid.isEmpty()) {
             return;
         }
@@ -288,20 +325,20 @@ public class FluidRenderer {
         // fluid attributes, fetch once for all fluids to save effort
         FluidType fluidType = fluid.getFluid().getFluidType();
         IClientFluidTypeExtensions attributes = IClientFluidTypeExtensions.of(fluidType);
-        TextureAtlasSprite still = getBlockSprite(attributes.getStillTexture(fluid));
-        TextureAtlasSprite flowing = getBlockSprite(attributes.getFlowingTexture(fluid));
+        TextureAtlasSprite still = getStillFluidSprite(fluid);
+        TextureAtlasSprite flowing = getFlowingFluidSprite(fluid);
         int color = attributes.getTintColor(fluid);
         light = withBlockLight(light, fluidType.getLightLevel(fluid));
         boolean isGas = fluidType.isLighterThanAir();
 
         // render all given cuboids
         for (FluidCuboid cube : cubes) {
-            renderCuboid(poseStack, buffer, cube, still, flowing, cube.getFromScaled(), cube.getToScaled(), color, light, isGas);
+            renderCuboid(pose, buffer, cube, still, flowing, cube.getFromScaled(), cube.getToScaled(), color, light, isGas);
         }
     }
 
     /**
-     * Renders a fluid cuboid with the given offset, used to manually place cuboids from a list for rendering {@link #renderCuboids(PoseStack, VertexConsumer, List, FluidStack, int)}
+     * Renders a fluid cuboid with the given offset, used to manually place cuboids from a list for rendering {@link #renderCuboids(PoseStack.Pose, VertexConsumer, List, FluidStack, int)}
      *
      * @param poseStack Pose stack instance
      * @param buffer    Buffer type
@@ -318,7 +355,7 @@ public class FluidRenderer {
             poseStack.pushPose();
             poseStack.translate(0, yOffset, 0);
         }
-        renderCuboid(poseStack, buffer, cube, still, flowing, cube.getFromScaled(), cube.getToScaled(), color, light, isGas);
+        renderCuboid(poseStack.last(), buffer, cube, still, flowing, cube.getFromScaled(), cube.getToScaled(), color, light, isGas);
         if (yOffset != 0) {
             poseStack.popPose();
         }
@@ -327,16 +364,16 @@ public class FluidRenderer {
     /**
      * Renders a fluid cuboid with partial height based on the capacity
      *
-     * @param poseStack Pose stack instance
-     * @param buffer    Render type buffer instance
-     * @param fluid     Fluid to render
-     * @param offset    Fluid amount offset, used to animate transitions
-     * @param capacity  Fluid tank capacity, must be above 0
-     * @param light     Quad lighting from TER
-     * @param cube      Fluid cuboid instance
-     * @param flipGas   If true, flips gas cubes
+     * @param pose     Pose
+     * @param buffer   Render type buffer instance
+     * @param fluid    Fluid to render
+     * @param offset   Fluid amount offset, used to animate transitions
+     * @param capacity Fluid tank capacity, must be above 0
+     * @param light    Quad lighting from TER
+     * @param cube     Fluid cuboid instance
+     * @param flipGas  If true, flips gas cubes
      */
-    public static void renderScaledCuboid(PoseStack poseStack, MultiBufferSource buffer, FluidCuboid cube, FluidStack fluid, float offset, int capacity, int light, boolean flipGas) {
+    public static void renderScaledCuboid(PoseStack.Pose pose, VertexConsumer buffer, FluidCuboid cube, FluidStack fluid, float offset, int capacity, int light, boolean flipGas) {
         // nothing to render
         if (fluid.isEmpty() || capacity <= 0) {
             return;
@@ -345,8 +382,8 @@ public class FluidRenderer {
         // fluid attributes
         FluidType fluidType = fluid.getFluid().getFluidType();
         IClientFluidTypeExtensions attributes = IClientFluidTypeExtensions.of(fluidType);
-        TextureAtlasSprite still = getBlockSprite(attributes.getStillTexture(fluid));
-        TextureAtlasSprite flowing = getBlockSprite(attributes.getFlowingTexture(fluid));
+        TextureAtlasSprite still = getStillFluidSprite(fluid);
+        TextureAtlasSprite flowing = getFlowingFluidSprite(fluid);
         boolean isGas = fluidType.isLighterThanAir();
         light = withBlockLight(light, fluidType.getLightLevel(fluid));
 
@@ -366,8 +403,6 @@ public class FluidRenderer {
         }
 
         // draw cuboid
-
-        // todo: render type
-        renderCuboid(poseStack, buffer.getBuffer(RenderTypes.translucentMovingBlock()), cube, still, flowing, from, to, attributes.getTintColor(fluid), light, isGas);
+        renderCuboid(pose, buffer, cube, still, flowing, from, to, attributes.getTintColor(fluid), light, isGas);
     }
 }
