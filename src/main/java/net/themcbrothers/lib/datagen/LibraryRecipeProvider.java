@@ -25,6 +25,14 @@ public class LibraryRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
                 .unlockedBy("has_wrench", has(TheMCBrosLib.WRENCH))
                 .save(this.output);
+
+        this.shaped(RecipeCategory.DECORATIONS, TheMCBrosLib.FLUID_TANK)
+                .pattern("X X")
+                .pattern("XXX")
+                .define('X', Tags.Items.GLASS_PANES_COLORLESS)
+                .unlockedBy("has_glass_pane", has(Tags.Items.GLASS_PANES_COLORLESS))
+                .unlockedBy("has_fluid_tank", has(TheMCBrosLib.FLUID_TANK))
+                .save(this.output);
     }
 
     public static class Runner extends RecipeProvider.Runner {

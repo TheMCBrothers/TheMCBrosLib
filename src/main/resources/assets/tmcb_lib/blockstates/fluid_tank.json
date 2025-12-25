@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "tmcb_lib:block/fluid_tank"
+        }
+    }
+}

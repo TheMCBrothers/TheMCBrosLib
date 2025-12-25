@@ -12,8 +12,13 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecartContainer;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -24,12 +29,19 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.transfer.energy.ItemAccessEnergyHandler;
+import net.neoforged.neoforge.transfer.fluid.ItemAccessFluidHandler;
 import net.themcbrothers.lib.config.Config;
 import net.themcbrothers.lib.energy.EnergyContainerItem;
+import net.themcbrothers.lib.fluidtank.FluidTankBlock;
+import net.themcbrothers.lib.fluidtank.FluidTankBlockEntity;
+import net.themcbrothers.lib.fluidtank.FluidTankBlockItem;
 import net.themcbrothers.lib.util.ComponentFormatter;
+import net.themcbrothers.lib.util.CreativeTabHelper;
 import net.themcbrothers.lib.wrench.WrenchItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +52,20 @@ public class TheMCBrosLib {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final ComponentFormatter TEXT_UTILS = new ComponentFormatter(MOD_ID);
 
+    private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MOD_ID);
+    public static final DeferredBlock<FluidTankBlock> FLUID_TANK = BLOCKS.registerBlock("fluid_tank", FluidTankBlock::new, properties -> properties
+            .instrument(NoteBlockInstrument.HAT)
+            .strength(0.5F)
+            .sound(SoundType.GLASS)
+            .noOcclusion()
+            .isValidSpawn(Blocks::never)
+            .isRedstoneConductor((_, _, _) -> false)
+            .isSuffocating((_, _, _) -> false)
+            .isViewBlocking((_, _, _) -> false));
+
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MOD_ID);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidTankBlockEntity>> FLUID_TANK_TYPE = BLOCK_ENTITY_TYPES.register("fluid_tank", () -> new BlockEntityType<>(FluidTankBlockEntity::new, FLUID_TANK.get()));
+
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
     public static final DeferredItem<WrenchItem> WRENCH = ITEMS.registerItem("wrench", WrenchItem::new, item -> new Item.Properties().stacksTo(1));
 
@@ -49,10 +75,13 @@ public class TheMCBrosLib {
     public TheMCBrosLib(IEventBus modEventBus, ModContainer modContainer) {
         NeoForgeMod.enableMilkFluid();
 
-        // Components
+        ITEMS.registerItem(FLUID_TANK.getId().getPath(), props -> new FluidTankBlockItem(FLUID_TANK.get(), props));
+        CreativeTabHelper.addToCreativeTabs(FLUID_TANK, CreativeModeTabs.FUNCTIONAL_BLOCKS.identifier());
+
         LibDataComponents.init();
         DATA_COMPONENT_TYPES.register(modEventBus);
-
+        BLOCKS.register(modEventBus);
+        BLOCK_ENTITY_TYPES.register(modEventBus);
         ITEMS.register(modEventBus);
 
         NeoForge.EVENT_BUS.addListener(this::onPlayerInteractWithEntity);
@@ -68,6 +97,9 @@ public class TheMCBrosLib {
                     }, item);
                 }
             }
+
+            event.registerItem(Capabilities.Fluid.ITEM, (_, context) -> new ItemAccessFluidHandler(context, LibDataComponents.FLUID.get(), FluidTankBlockEntity.CAPACITY), FLUID_TANK);
+            event.registerBlockEntity(Capabilities.Fluid.BLOCK, TheMCBrosLib.FLUID_TANK_TYPE.get(), (tank, _) -> tank.getTank());
         });
     }
 
