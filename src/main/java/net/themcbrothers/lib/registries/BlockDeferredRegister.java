@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * Modified version of {@link DeferredRegister.Blocks} for automatically registering {@link BlockItem}s
@@ -23,65 +24,41 @@ public class BlockDeferredRegister extends DeferredRegister.Blocks {
         this.itemRegister = itemRegister;
     }
 
-    /**
-     * Registers a simple {@link Block} with a simple {@link BlockItem}
-     *
-     * @param name  Registry name
-     * @param props Block properties
-     * @return Block holder object
-     */
     @Override
-    public DeferredBlock<Block> registerSimpleBlock(String name, BlockBehaviour.Properties props) {
-        return this.registerBlock(name, Block::new, props);
-    }
-
-    /**
-     * Registers a {@link Block} with a simple {@link BlockItem}
-     *
-     * @param name  Registry name
-     * @param func  Block factory
-     * @param props Block properties
-     * @param <B>   Block type
-     * @return Block holder object
-     */
-    @Override
-    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, BlockBehaviour.Properties props) {
-        DeferredBlock<B> holder = super.registerBlock(name, func, props);
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, Supplier<BlockBehaviour.Properties> properties) {
+        DeferredBlock<B> holder = super.registerBlock(name, func, properties);
         this.itemRegister.registerSimpleBlockItem(holder);
         return holder;
     }
 
-    /**
-     * Registers a {@link Block} with a {@link BlockItem} using the given factories
-     *
-     * @param name             Registry name
-     * @param blockFactory     Block factory
-     * @param props            Block properties
-     * @param blockItemFactory Item factory
-     * @param <B>              Block type
-     * @return Block holder object
-     */
-    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> blockFactory, BlockBehaviour.Properties props, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory) {
-        DeferredBlock<B> holder = super.registerBlock(name, blockFactory, props);
-        this.itemRegister.registerItem(name, properties -> blockItemFactory.apply(holder.get(), properties.useBlockDescriptionPrefix()));
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, Supplier<BlockBehaviour.Properties> properties, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory, Supplier<Item.Properties> itemProperties) {
+        DeferredBlock<B> holder = super.registerBlock(name, func, properties);
+        this.itemRegister.registerItem(name, props -> blockItemFactory.apply(holder.get(), props.useBlockDescriptionPrefix()), itemProperties);
         return holder;
     }
 
-    /**
-     * Registers a {@link Block} with a {@link BlockItem} using the given factories
-     *
-     * @param name             Registry name
-     * @param blockFactory     Block factory
-     * @param props            Block properties
-     * @param blockItemFactory Item factory
-     * @param itemProps        Item properties
-     * @param <B>              Block type
-     * @return Block holder object
-     */
-    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> blockFactory, BlockBehaviour.Properties props, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory, Item.Properties itemProps) {
-        DeferredBlock<B> holder = super.registerBlock(name, blockFactory, props);
-        this.itemRegister.registerItem(name, properties -> blockItemFactory.apply(holder.get(), properties), itemProps.useBlockDescriptionPrefix());
-        return holder;
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, UnaryOperator<BlockBehaviour.Properties> properties, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory, UnaryOperator<Item.Properties> itemProperties) {
+        return this.registerBlock(name, func, () -> properties.apply(BlockBehaviour.Properties.of()), blockItemFactory, () -> itemProperties.apply(new Item.Properties()));
+    }
+
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, Supplier<BlockBehaviour.Properties> properties, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory, UnaryOperator<Item.Properties> itemProperties) {
+        return this.registerBlock(name, func, properties, blockItemFactory, () -> itemProperties.apply(new Item.Properties()));
+    }
+
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, UnaryOperator<BlockBehaviour.Properties> properties, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory, Supplier<Item.Properties> itemProperties) {
+        return this.registerBlock(name, func, () -> properties.apply(BlockBehaviour.Properties.of()), blockItemFactory, itemProperties);
+    }
+
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, Supplier<BlockBehaviour.Properties> properties, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory) {
+        return this.registerBlock(name, func, properties, blockItemFactory, UnaryOperator.identity());
+    }
+
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, UnaryOperator<BlockBehaviour.Properties> properties, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory) {
+        return this.registerBlock(name, func, properties, blockItemFactory, UnaryOperator.identity());
+    }
+
+    public <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, ? extends B> func, BiFunction<? super B, Item.Properties, ? extends BlockItem> blockItemFactory) {
+        return this.registerBlock(name, func, UnaryOperator.identity(), blockItemFactory, UnaryOperator.identity());
     }
 
     /**
@@ -92,6 +69,28 @@ public class BlockDeferredRegister extends DeferredRegister.Blocks {
      * @return Block holder object
      */
     public DeferredBlock<Block> registerNoItem(String name, BlockBehaviour.Properties props) {
+        return super.registerBlock(name, Block::new, () -> props);
+    }
+
+    /**
+     * Registers a simple block without an item.
+     *
+     * @param name  Registry name
+     * @param props Block properties
+     * @return Block holder object
+     */
+    public DeferredBlock<Block> registerNoItem(String name, Supplier<BlockBehaviour.Properties> props) {
+        return super.registerBlock(name, Block::new, props);
+    }
+
+    /**
+     * Registers a block without an item.
+     *
+     * @param name  Registry name
+     * @param props Block properties
+     * @return Block holder object
+     */
+    public DeferredBlock<Block> registerNoItem(String name, UnaryOperator<BlockBehaviour.Properties> props) {
         return super.registerBlock(name, Block::new, props);
     }
 
@@ -104,6 +103,30 @@ public class BlockDeferredRegister extends DeferredRegister.Blocks {
      * @return Block holder object
      */
     public <B extends Block> DeferredBlock<B> registerNoItem(String name, Function<BlockBehaviour.Properties, ? extends B> func, BlockBehaviour.Properties props) {
+        return super.registerBlock(name, func, () -> props);
+    }
+
+    /**
+     * Registers a block without an item.
+     *
+     * @param name  Registry name
+     * @param func  Block factory
+     * @param props Block properties
+     * @return Block holder object
+     */
+    public <B extends Block> DeferredBlock<B> registerNoItem(String name, Function<BlockBehaviour.Properties, ? extends B> func, Supplier<BlockBehaviour.Properties> props) {
+        return super.registerBlock(name, func, props);
+    }
+
+    /**
+     * Registers a block without an item.
+     *
+     * @param name  Registry name
+     * @param func  Block factory
+     * @param props Block properties
+     * @return Block holder object
+     */
+    public <B extends Block> DeferredBlock<B> registerNoItem(String name, Function<BlockBehaviour.Properties, ? extends B> func, UnaryOperator<BlockBehaviour.Properties> props) {
         return super.registerBlock(name, func, props);
     }
 
