@@ -7,12 +7,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 @SuppressWarnings("unchecked")
 public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> {
@@ -38,15 +40,28 @@ public class EntityTypeDeferredRegister extends DeferredRegister<EntityType<?>> 
     /**
      * Registers an entity type for the given entity type builder, and registers a spawn egg for it
      *
+     * @param name      Entity name
+     * @param sup       Entity builder instance
+     * @param itemProps Item properties
+     * @param <T>       Entity class type
+     * @return Entity registry object
+     */
+    public <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup, UnaryOperator<Item.Properties> itemProps) {
+        var object = this.registerEntity(name, sup);
+        this.itemRegister.registerItem(name + "_spawn_egg", SpawnEggItem::new, properties -> itemProps.apply(properties.spawnEgg(object.get())));
+        return object;
+    }
+
+    /**
+     * Registers an entity type for the given entity type builder, and registers a spawn egg for it
+     *
      * @param name Entity name
      * @param sup  Entity builder instance
      * @param <T>  Entity class type
      * @return Entity registry object
      */
     public <T extends Mob> DeferredHolder<EntityType<?>, EntityType<T>> registerWithEgg(String name, Supplier<EntityType.Builder<T>> sup) {
-        var object = this.registerEntity(name, sup);
-        this.itemRegister.registerItem(name + "_spawn_egg", SpawnEggItem::new);
-        return object;
+        return this.registerWithEgg(name, sup, UnaryOperator.identity());
     }
 
     @Override
