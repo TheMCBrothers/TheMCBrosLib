@@ -32,18 +32,24 @@ import static net.themcbrothers.lib.client.render.FluidRenderer.getStillFluidSpr
 public class FluidTank extends AbstractWidget {
     private static final int MIN_FLUID_HEIGHT = 1;
 
+    private final int handlerIndex;
     private final ResourceHandler<FluidResource> fluidHandler;
     private final AbstractContainerScreen<?> screen;
 
-    public FluidTank(int x, int y, int width, int height, ResourceHandler<FluidResource> fluidHandler, AbstractContainerScreen<?> screen) {
+    public FluidTank(int x, int y, int width, int height, ResourceHandler<FluidResource> fluidHandler, int handlerIndex, AbstractContainerScreen<?> screen) {
         super(x, y, width, height, Component.empty());
         this.fluidHandler = fluidHandler;
         this.screen = screen;
+        this.handlerIndex = handlerIndex;
+    }
+
+    public FluidTank(int x, int y, int width, int height, ResourceHandler<FluidResource> fluidHandler, AbstractContainerScreen<?> screen) {
+        this(x, y, width, height, fluidHandler, 0, screen);
     }
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        this.drawFluid(guiGraphics, this.getX(), this.getY(), this.fluidHandler, 0);
+        this.drawFluid(guiGraphics, this.getX(), this.getY(), this.fluidHandler, this.handlerIndex);
     }
 
     public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
