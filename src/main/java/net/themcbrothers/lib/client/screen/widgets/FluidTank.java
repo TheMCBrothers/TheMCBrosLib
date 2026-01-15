@@ -2,6 +2,7 @@ package net.themcbrothers.lib.client.screen.widgets;
 
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -14,16 +15,19 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.neoforge.client.ClientTooltipFlag;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.themcbrothers.lib.util.TooltipHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static net.themcbrothers.lib.TheMCBrosLib.TEXT_UTILS;
 import static net.themcbrothers.lib.client.render.FluidRenderer.getStillFluidSprite;
 
 /**
@@ -53,8 +57,8 @@ public class FluidTank extends AbstractWidget {
     }
 
     public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        List<Component> tooltip = Lists.newArrayList();
-        tooltip.add(TEXT_UTILS.fluidName(this.getFluid()));
+        Minecraft minecraft = Minecraft.getInstance();
+        List<Component> tooltip = this.getFluid().getTooltipLines(Item.TooltipContext.of(minecraft.level), null, ClientTooltipFlag.of(minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL));
         TooltipHelper.appendAmount(tooltip, this.getFluid().getAmount(), this.getCapacity(), "mB", ChatFormatting.GRAY);
 
         // Only append Registry Name and Mod Name when the tank is not empty
@@ -67,11 +71,11 @@ public class FluidTank extends AbstractWidget {
     }
 
     public FluidStack getFluid() {
-        return this.fluidHandler.getResource(0).toStack(this.fluidHandler.getAmountAsInt(0));
+        return FluidUtil.getStack(this.fluidHandler, this.handlerIndex);
     }
 
     private int getCapacity() {
-        return this.fluidHandler.getCapacityAsInt(0, FluidResource.EMPTY);
+        return this.fluidHandler.getCapacityAsInt(this.handlerIndex, FluidResource.EMPTY);
     }
 
     // Rendering methods
