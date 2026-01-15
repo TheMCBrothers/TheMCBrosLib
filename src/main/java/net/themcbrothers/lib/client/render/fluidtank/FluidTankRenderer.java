@@ -12,11 +12,11 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
-import net.themcbrothers.lib.fluidtank.FluidTankBlockEntity;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 import net.themcbrothers.lib.client.model.fluid.FluidCuboid;
 import net.themcbrothers.lib.client.render.FluidRenderer;
+import net.themcbrothers.lib.fluidtank.FluidTankBlockEntity;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
@@ -39,10 +39,8 @@ public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEnti
     @Override
     public void extractRenderState(FluidTankBlockEntity blockEntity, FluidTankRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        ResourceHandler<FluidResource> tank = blockEntity.getTank();
-        FluidResource resource = tank.getResource(0);
-        state.fluid = resource.toStack(tank.getAmountAsInt(0));
-        state.capacity = tank.getCapacityAsInt(0, resource);
+        state.fluid = FluidUtil.getStack(blockEntity.getTank(), 0);
+        state.capacity = blockEntity.getTank().getCapacityAsInt(0, FluidResource.EMPTY);
     }
 
     @Override
