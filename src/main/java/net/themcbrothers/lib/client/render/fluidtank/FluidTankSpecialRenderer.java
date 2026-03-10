@@ -45,7 +45,7 @@ public class FluidTankSpecialRenderer implements SpecialModelRenderer<FluidTank>
         return new FluidTank(FluidUtil.getStack(handler, 0), handler.getCapacityAsInt(0, FluidResource.EMPTY));
     }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked {
+    public record Unbaked() implements SpecialModelRenderer.Unbaked<FluidTank> {
         public static final MapCodec<FluidTankSpecialRenderer.Unbaked> MAP_CODEC = MapCodec.unit(new FluidTankSpecialRenderer.Unbaked());
 
         @Override
@@ -54,7 +54,7 @@ public class FluidTankSpecialRenderer implements SpecialModelRenderer<FluidTank>
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(SpecialModelRenderer.BakingContext context) {
+        public SpecialModelRenderer<FluidTank> bake(SpecialModelRenderer.BakingContext context) {
             return new FluidTankSpecialRenderer(new FluidTankRenderer(context));
         }
     }

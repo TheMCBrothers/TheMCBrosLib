@@ -5,12 +5,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -62,7 +62,7 @@ public class FluidRenderer {
     }
 
     private static @NonNull TextureAtlasSprite getBlockSprite(Identifier sprite) {
-        Material material = ClientHooks.getBlockMaterial(sprite);
+        SpriteId material = new SpriteId(TextureAtlas.LOCATION_BLOCKS, sprite);
         return Minecraft.getInstance().getAtlasManager().get(material);
     }
 
