@@ -1,6 +1,6 @@
 package net.themcbrothers.lib.client.screen.widgets;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -41,7 +41,7 @@ public class EnergyBar extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         int xOff = this.unit.ordinal() * (this.width * 2 + 2);
         int yOff = this.size.getYOff();
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, this.getX() - 1, this.getY() - 1, xOff, yOff, this.width + 2, this.height + 2, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -49,10 +49,10 @@ public class EnergyBar extends AbstractWidget {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, this.getX(), this.getY() + this.height - i, xOff + this.width + 2, yOff, this.width, i, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 
-    public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void renderToolTip(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         Component energy = TEXT_UTILS.energyWithMax(this.energyProvider.getEnergyStored(), this.energyProvider.getMaxEnergyStored(), this.unit);
         ClientTooltipComponent component = ClientTooltipComponent.create(energy.getVisualOrderText());
-        guiGraphics.renderTooltip(this.screen.getFont(), List.of(component), mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+        guiGraphics.tooltip(this.screen.getFont(), List.of(component), mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -24,9 +23,9 @@ public class FluidTankSpecialRenderer implements SpecialModelRenderer<FluidTank>
     }
 
     @Override
-    public void submit(@Nullable FluidTank argument, ItemDisplayContext type, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
-        if (argument != null) {
-            this.fluidTankRenderer.submitTank(argument.fluid(), argument.capacity(), poseStack, submitNodeCollector, lightCoords);
+    public void submit(@Nullable FluidTank fluidTank, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+        if (fluidTank != null) {
+            this.fluidTankRenderer.submitTank(fluidTank.fluid(), fluidTank.capacity(), poseStack, submitNodeCollector, lightCoords);
         }
     }
 

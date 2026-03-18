@@ -3,7 +3,7 @@ package net.themcbrothers.lib.client.screen.widgets;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.client.ClientTooltipFlag;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.fluid.FluidTintSource;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
@@ -52,11 +52,11 @@ public class FluidTank extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.drawFluid(guiGraphics, this.getX(), this.getY(), this.fluidHandler, this.handlerIndex);
     }
 
-    public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void renderToolTip(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         Minecraft minecraft = Minecraft.getInstance();
         List<Component> tooltip = this.getFluid().getTooltipLines(Item.TooltipContext.of(minecraft.level), null, ClientTooltipFlag.of(minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL));
         TooltipHelper.appendAmount(tooltip, this.getFluid().getAmount(), this.getCapacity(), "mB", ChatFormatting.GRAY);
@@ -67,7 +67,7 @@ public class FluidTank extends AbstractWidget {
             TooltipHelper.appendModNameFromFluid(tooltip, this.getFluid());
         }
 
-        guiGraphics.renderTooltip(this.screen.getMinecraft().font, Lists.transform(tooltip, component -> ClientTooltipComponent.create(component.getVisualOrderText())), mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+        guiGraphics.tooltip(this.screen.getMinecraft().font, Lists.transform(tooltip, component -> ClientTooltipComponent.create(component.getVisualOrderText())), mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
     }
 
     public FluidStack getFluid() {
@@ -80,12 +80,12 @@ public class FluidTank extends AbstractWidget {
 
     // Rendering methods
 
-    protected void drawFluid(GuiGraphics guiGraphics, int xPosition, int yPosition, ResourceHandler<FluidResource> resourceHandler, int index) {
+    protected void drawFluid(GuiGraphicsExtractor guiGraphics, int xPosition, int yPosition, ResourceHandler<FluidResource> resourceHandler, int index) {
         FluidResource resource = resourceHandler.getResource(index);
         this.drawFluid(guiGraphics, xPosition, yPosition, resource, resourceHandler.getAmountAsLong(index), resourceHandler.getCapacityAsLong(index, resource));
     }
 
-    protected void drawFluid(GuiGraphics guiGraphics, int xPosition, int yPosition, @Nullable FluidResource resource, long amount, long capacity) {
+    protected void drawFluid(GuiGraphicsExtractor guiGraphics, int xPosition, int yPosition, @Nullable FluidResource resource, long amount, long capacity) {
         if (resource == null || resource.isEmpty()) {
             return;
         }
@@ -101,7 +101,7 @@ public class FluidTank extends AbstractWidget {
         }
     }
 
-    private static void drawTiledSprite(GuiGraphics guiGraphics, int tiledWidth, int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite, int xPosition, int yPosition) {
+    private static void drawTiledSprite(GuiGraphicsExtractor guiGraphics, int tiledWidth, int tiledHeight, int color, int scaledAmount, TextureAtlasSprite sprite, int xPosition, int yPosition) {
         SpriteContents spriteContents = sprite.contents();
         GuiSpriteScaling.Tile tileScaling = new GuiSpriteScaling.Tile(spriteContents.width(), spriteContents.height());
 
@@ -129,7 +129,17 @@ public class FluidTank extends AbstractWidget {
     }
 
     private static int getColorTint(FluidStack fluidStack) {
-        return IClientFluidTypeExtensions.of(fluidStack.getFluid()).getTintColor(fluidStack);
+        FluidTintSource tintSource = Minecraft.getInstance()
+                .getModelManager()
+                .getFluidStateModelSet()
+                .get(fluidStack.getFluid().defaultFluidState())
+                .fluidTintSource();
+
+        if (tintSource == null) {
+            return -1;
+        }
+
+        return tintSource.colorAsStack(fluidStack);
     }
 
     @Override

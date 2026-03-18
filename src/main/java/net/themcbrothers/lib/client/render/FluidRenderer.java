@@ -3,6 +3,7 @@ package net.themcbrothers.lib.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -10,8 +11,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.themcbrothers.lib.client.model.fluid.FluidCuboid;
@@ -38,10 +37,12 @@ public class FluidRenderer {
             return getBlockSprite(MissingTextureAtlasSprite.getLocation());
         }
 
-        Fluid fluid = fluidStack.getFluid();
-        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
-        Identifier fluidStill = renderProperties.getStillTexture(fluidStack);
-        return getBlockSprite(fluidStill);
+        FluidModel fluidModel = Minecraft.getInstance()
+                .getModelManager()
+                .getFluidStateModelSet()
+                .get(fluidStack.getFluid().defaultFluidState());
+
+        return fluidModel.stillMaterial().sprite();
     }
 
     /**
@@ -55,10 +56,12 @@ public class FluidRenderer {
             return getBlockSprite(MissingTextureAtlasSprite.getLocation());
         }
 
-        Fluid fluid = fluidStack.getFluid();
-        IClientFluidTypeExtensions renderProperties = IClientFluidTypeExtensions.of(fluid);
-        Identifier fluidFlowing = renderProperties.getFlowingTexture(fluidStack);
-        return getBlockSprite(fluidFlowing);
+        FluidModel fluidModel = Minecraft.getInstance()
+                .getModelManager()
+                .getFluidStateModelSet()
+                .get(fluidStack.getFluid().defaultFluidState());
+
+        return fluidModel.flowingMaterial().sprite();
     }
 
     private static @NonNull TextureAtlasSprite getBlockSprite(Identifier sprite) {
@@ -323,13 +326,16 @@ public class FluidRenderer {
         }
 
         // fluid attributes, fetch once for all fluids to save effort
+        FluidModel fluidModel = Minecraft.getInstance()
+                .getModelManager()
+                .getFluidStateModelSet()
+                .get(fluid.getFluid().defaultFluidState());
         FluidType fluidType = fluid.getFluid().getFluidType();
-        IClientFluidTypeExtensions attributes = IClientFluidTypeExtensions.of(fluidType);
-        TextureAtlasSprite still = getStillFluidSprite(fluid);
-        TextureAtlasSprite flowing = getFlowingFluidSprite(fluid);
-        int color = attributes.getTintColor(fluid);
-        light = withBlockLight(light, fluidType.getLightLevel(fluid));
+        TextureAtlasSprite still = fluidModel.stillMaterial().sprite();
+        TextureAtlasSprite flowing = fluidModel.flowingMaterial().sprite();
+        int color = fluidModel.fluidTintSource() == null ? -1 : fluidModel.fluidTintSource().colorAsStack(fluid);
         boolean isGas = fluidType.isLighterThanAir();
+        light = withBlockLight(light, fluidType.getLightLevel(fluid));
 
         // render all given cuboids
         for (FluidCuboid cube : cubes) {
@@ -379,11 +385,15 @@ public class FluidRenderer {
             return;
         }
 
-        // fluid attributes
+        // fluid model
+        FluidModel fluidModel = Minecraft.getInstance()
+                .getModelManager()
+                .getFluidStateModelSet()
+                .get(fluid.getFluid().defaultFluidState());
         FluidType fluidType = fluid.getFluid().getFluidType();
-        IClientFluidTypeExtensions attributes = IClientFluidTypeExtensions.of(fluidType);
-        TextureAtlasSprite still = getStillFluidSprite(fluid);
-        TextureAtlasSprite flowing = getFlowingFluidSprite(fluid);
+        TextureAtlasSprite still = fluidModel.stillMaterial().sprite();
+        TextureAtlasSprite flowing = fluidModel.flowingMaterial().sprite();
+        int color = fluidModel.fluidTintSource() == null ? -1 : fluidModel.fluidTintSource().colorAsStack(fluid);
         boolean isGas = fluidType.isLighterThanAir();
         light = withBlockLight(light, fluidType.getLightLevel(fluid));
 
@@ -403,6 +413,6 @@ public class FluidRenderer {
         }
 
         // draw cuboid
-        renderCuboid(pose, buffer, cube, still, flowing, from, to, attributes.getTintColor(fluid), light, isGas);
+        renderCuboid(pose, buffer, cube, still, flowing, from, to, color, light, isGas);
     }
 }
