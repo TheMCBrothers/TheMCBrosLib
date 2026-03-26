@@ -1,4 +1,4 @@
-package net.themcbrothers.lib.datagen.provider;
+package net.themcbrothers.lib.data.models;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
