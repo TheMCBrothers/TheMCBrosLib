@@ -5,6 +5,9 @@ import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.themcbrothers.lib.TheMCBrosLib;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +20,7 @@ import java.util.Optional;
  * @since 4.2.0
  */
 public class EnergySlot extends Slot {
-    public static final Identifier EMPTY_SLOT_ENERGY = TheMCBrosLib.id("item/empty_slot_energy");
+    public static final Identifier EMPTY_SLOT_ENERGY = TheMCBrosLib.id("container/slot/energy");
 
     private final ItemMode itemMode;
     private final boolean showIcon;
@@ -69,13 +72,20 @@ public class EnergySlot extends Slot {
      * @return {@code true} if the given {@link ItemStack} valid for an {@link EnergySlot}, otherwise {@code false}
      */
     public static boolean isValid(ItemStack stack, ItemMode itemMode) {
-        return true; // TODO: 26.1
-//        return Optional.ofNullable(stack.getCapability(Capabilities.Energy.ITEM)).map(energyStorage -> switch (itemMode) {
-//            case EXTRACT -> energyStorage.canExtract();
-//            case RECEIVE -> energyStorage.canReceive();
-//            case EXTRACT_AND_RECEIVE -> energyStorage.canExtract() && energyStorage.canReceive();
-//            case EXTRACT_OR_RECEIVE -> energyStorage.canExtract() || energyStorage.canReceive();
-//        }).orElse(false);
+        EnergyHandler energyHandler = ItemAccess.forStack(stack).getCapability(Capabilities.Energy.ITEM);
+
+        if (energyHandler == null) {
+            return false;
+        }
+
+        try (Transaction tx = Transaction.openRoot()) {
+            return switch (itemMode) {
+                case EXTRACT -> energyHandler.extract(1, tx) == 1;
+                case RECEIVE -> energyHandler.insert(1, tx) == 1;
+                case EXTRACT_AND_RECEIVE -> energyHandler.extract(1, tx) == 1 && energyHandler.insert(1, tx) == 1;
+                case EXTRACT_OR_RECEIVE -> energyHandler.extract(1, tx) == 1 || energyHandler.insert(1, tx) == 1;
+            };
+        }
     }
 
     /**
