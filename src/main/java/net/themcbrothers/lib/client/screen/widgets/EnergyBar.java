@@ -72,10 +72,10 @@ public class EnergyBar extends AbstractWidget {
     }
 
     private int getScaledHeight() {
-        float i = (float) this.energyProvider.getEnergyStored();
-        float j = (float) this.energyProvider.getMaxEnergyStored();
-        float h = (float) this.height;
-        return i != 0 && j != 0 ? (int) (i / j * h) : 0;
+        double i = (double) this.energyProvider.getEnergyStored();
+        double j = (double) this.energyProvider.getMaxEnergyStored();
+        double h = this.height;
+        return i != 0 && j != 0 ? (int) Math.clamp(i / j * h, 1, h) : 0;
     }
 
     @Override
