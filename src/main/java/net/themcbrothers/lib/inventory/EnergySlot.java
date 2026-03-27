@@ -12,8 +12,6 @@ import net.themcbrothers.lib.TheMCBrosLib;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 /**
  * Slot for Energy Item Stacks
  *
@@ -39,6 +37,20 @@ public class EnergySlot extends Slot {
         super(container, slot, x, y);
         this.itemMode = itemMode;
         this.showIcon = showIcon;
+    }
+
+    /**
+     * Constructor for advanced use of this slot class. Empty slot shows energy icon.
+     *
+     * @param container Container
+     * @param slot      Slot index
+     * @param x         X position
+     * @param y         Y position
+     * @param itemMode  {@link ItemMode}
+     * @since 9.0.0
+     */
+    public EnergySlot(Container container, int slot, int x, int y, ItemMode itemMode) {
+        this(container, slot, x, y, itemMode, true);
     }
 
     /**
