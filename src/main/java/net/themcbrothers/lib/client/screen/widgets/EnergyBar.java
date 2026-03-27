@@ -57,7 +57,6 @@ public class EnergyBar extends AbstractWidget {
 
     @Override
     public void onClick(MouseButtonEvent event, boolean doubleClick) {
-        // TODO: right click other than left click
         this.cycleUnit();
     }
 
