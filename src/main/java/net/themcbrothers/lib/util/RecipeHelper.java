@@ -2,8 +2,6 @@ package net.themcbrothers.lib.util;
 
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipePropertySet;
 
@@ -28,16 +26,5 @@ public final class RecipeHelper {
 
         RecipeManager.RECIPE_PROPERTY_SETS = Maps.newHashMap(RecipeManager.RECIPE_PROPERTY_SETS);
         return RecipeManager.RECIPE_PROPERTY_SETS;
-    }
-
-    /**
-     * Gets the result item of a recipe using the client level's registry access
-     *
-     * @param recipe Any recipe
-     * @return Recipe result item
-     */
-    public static ItemStack getResultItem(Recipe<?> recipe) {
-        // TODO: 1.21.X
-        return ItemStack.EMPTY;
     }
 }
