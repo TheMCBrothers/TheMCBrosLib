@@ -29,27 +29,21 @@ public class ExtendedEnergyStorage extends SimpleEnergyHandler {
     }
 
     /**
-     * Removes energy from the storage
+     * Removes energy from the storage without any transaction
      *
      * @param energy Amount of energy
      */
     public void consumeEnergy(int energy) {
-        try (Transaction tx = Transaction.openRoot()) {
-            this.extract(energy, tx);
-            tx.commit();
-        }
+        this.set(Math.max(this.energy - energy, 0));
     }
 
     /**
-     * Adds energy to the storage
+     * Adds energy to the storage without any transaction
      *
      * @param energy Amount of energy
      */
     public void growEnergy(int energy) {
-        try (Transaction tx = Transaction.openRoot()) {
-            this.insert(energy, tx);
-            tx.commit();
-        }
+        this.set(Math.min(this.energy + energy, this.capacity));
     }
 
     public int getMaxInsert() {
