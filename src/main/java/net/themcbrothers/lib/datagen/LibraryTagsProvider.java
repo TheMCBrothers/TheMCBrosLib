@@ -29,7 +29,7 @@ public class LibraryTagsProvider {
 
         @Override
         protected void addTags(HolderLookup.Provider lookupProvider) {
-            this.tag(LibraryTags.Items.TOOLS_WRENCH).add(TheMCBrosLib.WRENCH.value());
+            this.tag(LibraryTags.Items.TOOLS_WRENCH).add(TheMCBrosLib.WRENCH.getKey());
         }
     }
 }

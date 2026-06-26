@@ -38,7 +38,7 @@ public final class FluidTankBlock extends BaseEntityBlock implements WrenchableB
     protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (this.tryWrench(state, level, pos, player, hand, hitResult)) {
             return InteractionResult.SUCCESS_SERVER;
-        } else if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hitResult.getDirection())) {
+        } else if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hitResult.getDirection(), null)) {
             return InteractionResult.SUCCESS_SERVER;
         }
 

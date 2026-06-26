@@ -34,27 +34,20 @@ public class ClientConfig {
         EnumSet<ChatFormatting> validFormatting = EnumSet.allOf(ChatFormatting.class);
         validFormatting.remove(ChatFormatting.RESET);
 
-        StringJoiner validColorsJoiner = new StringJoiner(", ");
         StringJoiner validFormatsJoiner = new StringJoiner(", ");
 
         for (ChatFormatting chatFormatting : validFormatting) {
-            String lowerCaseName = chatFormatting.getName().toLowerCase(Locale.ROOT);
-            if (chatFormatting.isColor()) {
-                validColorsJoiner.add(lowerCaseName);
-            } else if (chatFormatting.isFormat()) {
-                validFormatsJoiner.add(lowerCaseName);
-            }
+            String lowerCaseName = chatFormatting.name().toLowerCase(Locale.ROOT);
+            validFormatsJoiner.add(lowerCaseName);
         }
 
-        String validColors = validColorsJoiner.toString();
         String validFormats = validFormatsJoiner.toString();
 
         builder.push("formatting");
         this.modNameFormatFriendly = builder
                 .comment(
                         "How the mod name should be formatted in the tooltip. Leave blank to disable.",
-                        "Use these formatting colors:", validColors,
-                        "With these formatting options:", validFormats
+                        "Use these formatting colors:", validFormats
                 )
                 .translation("config.tmcb_lib.formatting.modNameFormat")
                 .define("modNameFormat", "blue italic");
@@ -99,12 +92,11 @@ public class ClientConfig {
         String[] strings = friendlyFormat.split(" ");
 
         for (String string : strings) {
-            ChatFormatting formatting = ChatFormatting.getByName(string);
-
-            if (formatting != null) {
+            try {
+                ChatFormatting formatting = ChatFormatting.valueOf(string.toUpperCase(Locale.ROOT));
                 format.append(formatting);
-            } else {
-                LOGGER.error("Invalid format: " + string);
+            } catch (IllegalArgumentException ex) {
+                LOGGER.error("Invalid format: {}", string);
             }
         }
 

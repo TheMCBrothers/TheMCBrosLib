@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -114,8 +115,8 @@ public final class TooltipHelper {
      * @return TRUE if the tooltip already contains the mod name at the end, otherwise FALSE
      */
     public static boolean isModNamePresent(List<Component> tooltip, String modName) {
-        if (tooltip.size() > 1) {
-            Component line = tooltip.get(tooltip.size() - 1);
+        if (!tooltip.isEmpty()) {
+            Component line = tooltip.getLast();
             String withoutFormatting = ChatFormatting.stripFormatting(line.getString());
             return modName.equals(withoutFormatting);
         }
